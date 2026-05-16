@@ -1,0 +1,66 @@
+<section class="section page-header page-header-compact">
+    <div class="container">
+        <a href="/library" class="back-link">← 返回课件库</a>
+        <div class="view-header">
+            <div>
+                <div class="view-meta">
+                    <span class="courseware-subject <%= courseware.subject %>"><%= courseware.subject %></span>
+                    <span class="courseware-grade"><%= courseware.grade %></span>
+                </div>
+                <h1><%= courseware.title %></h1>
+                <p><%= courseware.description %></p>
+                <div class="courseware-tags">
+                    <% courseware.tags.forEach(function(tag) { %>
+                    <span class="tag"><%= tag %></span>
+                    <% }) %>
+                </div>
+            </div>
+            <div class="view-actions">
+                <a href="/download/<%= courseware.id %>" class="btn btn-primary btn-lg">
+                    <span>⬇ 下载课件</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section view-preview">
+    <div class="container">
+        <div class="preview-frame-wrapper">
+            <div class="preview-toolbar">
+                <div class="toolbar-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="toolbar-title"><%= courseware.title %></span>
+                <div class="toolbar-actions">
+                    <a href="/download/<%= courseware.id %>" class="toolbar-btn" title="下载">⬇</a>
+                </div>
+            </div>
+            <iframe src="/<%= courseware.file %>" class="preview-frame" loading="lazy" title="<%= courseware.title %>"></iframe>
+        </div>
+    </div>
+</section>
+
+<section class="section view-info">
+    <div class="container">
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>📖 使用说明</h3>
+                <ul>
+                    <li>本课件为独立 HTML 文件，双击即可在浏览器中打开</li>
+                    <li>支持所有现代浏览器（Chrome、Edge、Firefox）</li>
+                    <li>无需网络连接，下载后离线也可使用</li>
+                    <li>可直接发送给学生或投屏到课堂上展示</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>🎯 教学建议</h3>
+                <ul>
+                    <li>引导学生动手操作，观察参数变化对结果的影响</li>
+                    <li>结合课件中的交互功能进行课堂提问</li>
+                    <li>可作为课后复习工具发给学生自主探索</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

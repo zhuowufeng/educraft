@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二次函数图像探索 - y = ax² + bx + c</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: #f0f4f8; color: #1a202c; padding: 20px; min-height: 100vh;
+    display: flex; justify-content: center; align-items: flex-start;
+  }
+  .container {
+    max-width: 960px; width: 100%; background: #fff; border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08); overflow: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #2b6cb0 0%, #1a365d 100%);
+    color: #fff; padding: 20px 28px; text-align: center;
+  }
+  header h1 { font-size: 26px; font-weight: 700; letter-spacing: 2px; }
+  header p { font-size: 15px; opacity: 0.85; margin-top: 6px; font-weight: 400; }
+  .eq-banner {
+    background: #ebf4ff; text-align: center; padding: 12px 20px;
+    border-bottom: 1px solid #d6e4f0;
+  }
+  .eq-banner .formula {
+    font-size: 22px; font-weight: 700;
+    font-family: "Times New Roman", "Cambria Math", "STIXGeneral", serif;
+    transition: color 0.3s;
+  }
+  .eq-banner .formula.warning { color: #c53030; }
+  .eq-banner .not-quadratic {
+    display: none; font-size: 14px; color: #c53030; font-weight: 600; margin-top: 4px;
+  }
+  .eq-banner .not-quadratic.show { display: block; }
+  .main-layout { display: flex; flex-wrap: wrap; }
+  .canvas-wrap {
+    flex: 1; min-width: 0; position: relative; padding: 16px;
+    background: #fafcff; display: flex; align-items: center; justify-content: center;
+  }
+  .canvas-wrap canvas {
+    display: block; width: 100%; max-width: 620px;
+    border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;
+    cursor: crosshair; touch-action: none;
+  }
+  .side-panel {
+    width: 300px; min-width: 260px; flex-shrink: 0;
+    padding: 20px; border-left: 1px solid #e2e8f0;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .slider-group { }
+  .slider-group .slider-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 15px; font-weight: 600; margin-bottom: 4px;
+  }
+  .slider-group .slider-label .val {
+    font-weight: 700; font-family: "Times New Roman", serif; min-width: 44px; text-align: right; font-size: 17px;
+  }
+  .slider-group .slider-label .coef { font-family: "Times New Roman", serif; font-size: 17px; }
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  .slider-row input[type="range"] {
+    -webkit-appearance: none; appearance: none; flex: 1; height: 6px;
+    border-radius: 3px; background: #e2e8f0; outline: none; transition: background 0.2s;
+  }
+  .slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
+    border-radius: 50%; cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform 0.15s;
+  }
+  .slider-row input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  .slider-row input[type="range"]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .slider-row input[type="range"].slider-a::-webkit-slider-thumb { background: #e53e3e; }
+  .slider-row input[type="range"].slider-a::-moz-range-thumb { background: #e53e3e; }
+  .slider-row input[type="range"].slider-a.danger { background: #fed7d7; }
+  .slider-row input[type="range"].slider-a.danger::-webkit-slider-thumb { background: #9b2c2c; border-color: #742a2a; }
+  .slider-row input[type="range"].slider-a.danger::-moz-range-thumb { background: #9b2c2c; border-color: #742a2a; }
+  .slider-row input[type="range"].slider-b::-webkit-slider-thumb { background: #dd6b20; }
+  .slider-row input[type="range"].slider-b::-moz-range-thumb { background: #dd6b20; }
+  .slider-row input[type="range"].slider-c::-webkit-slider-thumb { background: #2f855a; }
+  .slider-row input[type="range"].slider-c::-moz-range-thumb { background: #2f855a; }
+  .info-card {
+    background: #f7fafc; border-radius: 8px; padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .info-card h3 {
+    font-size: 14px; color: #4a5568; margin-bottom: 8px; font-weight: 600;
+    border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; letter-spacing: 1px;
+  }
+  .info-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 3px 0; font-size: 14px; line-height: 1.6;
+  }
+  .info-item .label { color: #4a5568; white-space: nowrap; }
+  .info-item .value {
+    font-weight: 700; font-family: "Times New Roman", "Cambria Math", serif;
+    color: #2d3748; text-align: right; padding-left: 8px;
+  }
+  .info-item .value.highlight { color: #2b6cb0; }
+  .info-item .value.root { color: #38a169; }
+  .info-item .value.delta-pos { color: #38a169; }
+  .info-item .value.delta-zero { color: #dd6b20; }
+  .info-item .value.delta-neg { color: #c53030; }
+  .info-item .value.na { color: #a0aec0; font-weight: 400; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px; font-size: 12px; color: #4a5568;
+  }
+  .legend-item .swatch {
+    width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+  }
+  .legend-item .swatch.dash {
+    background: transparent; border: 2px dashed #dd6b20;
+  }
+  .btn-row { display: flex; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 10px; border: none; border-radius: 6px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s, transform 0.1s; font-family: inherit;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-reset { background: #e2e8f0; color: #2d3748; }
+  .btn-reset:hover { background: #cbd5e0; }
+  .btn-preset { background: #ebf4ff; color: #2b6cb0; flex: 1; min-width: 70px; }
+  .btn-preset:hover { background: #bee3f8; }
+  @media (max-width: 720px) {
+    body { padding: 10px; }
+    header h1 { font-size: 20px; }
+    header { padding: 16px 16px; }
+    .side-panel { width: 100%; border-left: none; border-top: 1px solid #e2e8f0; }
+    .canvas-wrap { padding: 10px; }
+    .canvas-wrap canvas { max-width: 100%; }
+    .eq-banner .formula { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>二次函数图像探索</h1>
+    <p>调整系数 a、b、c，观察抛物线变化规律</p>
+  </header>
+  <div class="eq-banner">
+    <div class="formula" id="formulaDisplay">y = x²</div>
+    <div class="not-quadratic" id="notQuadratic">a = 0 时不是二次函数（线性函数）</div>
+  </div>
+  <div class="main-layout">
+    <div class="canvas-wrap">
+      <canvas id="graphCanvas"></canvas>
+    </div>
+    <div class="side-panel">
+      <!-- Slider a -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span><span class="coef" style="color:#e53e3e;font-weight:700;">a</span> 开口方向与大小</span>
+          <span class="val" id="valA" style="color:#e53e3e;">1.0</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" class="slider-a" id="sliderA" min="-5" max="5" step="0.1" value="1">
+        </div>
+      </div>
+      <!-- Slider b -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span><span class="coef" style="color:#dd6b20;font-weight:700;">b</span> 对称轴位置</span>
+          <span class="val" id="valB" style="color:#dd6b20;">0.0</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" class="slider-b" id="sliderB" min="-10" max="10" step="0.1" value="0">
+        </div>
+      </div>
+      <!-- Slider c -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span><span class="coef" style="color:#2f855a;font-weight:700;">c</span> 与 y 轴交点</span>
+          <span class="val" id="valC" style="color:#2f855a;">0.0</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" class="slider-c" id="sliderC" min="-10" max="10" step="0.1" value="0">
+        </div>
+      </div>
+      <!-- Info card -->
+      <div class="info-card">
+        <h3>关键特征</h3>
+        <div class="info-item"><span class="label">顶点坐标</span><span class="value highlight" id="infoVertex">(0, 0)</span></div>
+        <div class="info-item"><span class="label">对称轴</span><span class="value highlight" id="infoAxis">x = 0</span></div>
+        <div class="info-item"><span class="label">判别式 Δ</span><span class="value" id="infoDelta">0</span></div>
+        <div class="info-item"><span class="label">与 x 轴交点</span><span class="value" id="infoRoots">x = 0（二重根）</span></div>
+        <div class="info-item"><span class="label">开口方向</span><span class="value" id="infoDir">向上</span></div>
+      </div>
+      <!-- Legend -->
+      <div class="legend">
+        <span class="legend-item"><span class="swatch" style="background:#2b6cb0"></span>图像</span>
+        <span class="legend-item"><span class="swatch" style="background:#e53e3e"></span>顶点</span>
+        <span class="legend-item"><span class="swatch" style="background:#38a169"></span>根</span>
+        <span class="legend-item"><span class="swatch dash"></span>对称轴</span>
+      </div>
+      <!-- Buttons -->
+      <div class="btn-row">
+        <button class="btn btn-reset" id="btnReset">重置</button>
+        <button class="btn btn-preset" id="btnPreset1">y = x²</button>
+        <button class="btn btn-preset" id="btnPreset2">y = x²+2x+1</button>
+        <button class="btn btn-preset" id="btnPreset3">y = -x²+4</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---- DOM refs ----
+  const canvas = document.getElementById('graphCanvas');
+  const ctx = canvas.getContext('2d');
+  const wrap = canvas.parentElement;
+
+  const sliderA = document.getElementById('sliderA');
+  const sliderB = document.getElementById('sliderB');
+  const sliderC = document.getElementById('sliderC');
+  const valA = document.getElementById('valA');
+  const valB = document.getElementById('valB');
+  const valC = document.getElementById('valC');
+  const formulaDisplay = document.getElementById('formulaDisplay');
+  const notQuad = document.getElementById('notQuadratic');
+  const infoVertex = document.getElementById('infoVertex');
+  const infoAxis = document.getElementById('infoAxis');
+  const infoDelta = document.getElementById('infoDelta');
+  const infoRoots = document.getElementById('infoRoots');
+  const infoDir = document.getElementById('infoDir');
+
+  // ---- math domain ----
+  const X_MIN = -10, X_MAX = 10;
+  const Y_MIN = -10, Y_MAX = 10;
+
+  // ---- canvas sizing (DRP-aware) ----
+  let cssW = 0, cssH = 0;
+  let W = 0, H = 0;
+  let dpr = 1;
+
+  function resizeCanvas() {
+    const rect = wrap.getBoundingClientRect();
+    const avail = rect.width - 32;
+    const size = Math.min(Math.max(avail, 280), 620);
+    cssW = size;
+    cssH = size;
+    dpr = window.devicePixelRatio || 1;
+    W = Math.round(cssW * dpr);
+    H = Math.round(cssH * dpr);
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.width = W;
+    canvas.height = H;
+    draw();
+  }
+
+  // ---- coordinate mapping ----
+  // Returns canvas coordinates for a math point.
+  function tx(x) { return ((x - X_MIN) / (X_MAX - X_MIN)) * W; }
+  function ty(y) { return H - ((y - Y_MIN) / (Y_MAX - Y_MIN)) * H; }
+  // Inverse (for future use)
+  function mx(cx) { return (cx / W) * (X_MAX - X_MIN) + X_MIN; }
+  function my(cy) { return Y_MAX - (cy / H) * (Y_MAX - Y_MIN); }
+
+  // ---- format equation ----
+  function fmtEq(a, b, c) {
+    var parts = [];
+    if (Math.abs(a) > 1e-9) {
+      if (a === 1) parts.push('x²');
+      else if (a === -1) parts.push('-x²');
+      else parts.push(a.toFixed(1) + 'x²');
+    }
+    if (Math.abs(b) > 1e-9) {
+      if (parts.length === 0) {
+        if (b === 1) parts.push('x');
+        else if (b === -1) parts.push('-x');
+        else parts.push(b.toFixed(1) + 'x');
+      } else {
+        if (b > 0) {
+          if (b === 1) parts.push(' + x');
+          else parts.push(' + ' + b.toFixed(1) + 'x');
+        } else {
+          if (b === -1) parts.push(' - x');
+          else parts.push(' - ' + Math.abs(b).toFixed(1) + 'x');
+        }
+      }
+    }
+    if (Math.abs(c) > 1e-9) {
+      if (parts.length === 0) {
+        parts.push(c.toFixed(1));
+      } else {
+        if (c > 0) parts.push(' + ' + c.toFixed(1));
+        else parts.push(' - ' + Math.abs(c).toFixed(1));
+      }
+    }
+    if (parts.length === 0) return 'y = 0';
+    return 'y = ' + parts.join('');
+  }
+
+  // ---- drawing functions ----
+  function drawGrid() {
+    var cw = cssW, ch = cssH;
+
+    // light grid every 1 unit
+    ctx.strokeStyle = '#edf2f7';
+    ctx.lineWidth = 1 * dpr;
+    for (var x = Math.ceil(X_MIN); x <= X_MAX; x++) {
+      if (x === 0) continue;
+      var px = tx(x);
+      ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+    }
+    for (var y = Math.ceil(Y_MIN); y <= Y_MAX; y++) {
+      if (y === 0) continue;
+      var py = ty(y);
+      ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+    }
+
+    // axes
+    var ox = tx(0);
+    var oy = ty(0);
+    ctx.strokeStyle = '#2d3748';
+    ctx.lineWidth = 2 * dpr;
+    ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, H); ctx.stroke();
+
+    // arrows
+    ctx.fillStyle = '#2d3748';
+    ctx.beginPath(); ctx.moveTo(W, oy); ctx.lineTo(W - 8 * dpr, oy - 4 * dpr); ctx.lineTo(W - 8 * dpr, oy + 4 * dpr); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox - 4 * dpr, 8 * dpr); ctx.lineTo(ox + 4 * dpr, 8 * dpr); ctx.closePath(); ctx.fill();
+
+    // axis labels
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('x', W - 4 * dpr, oy - 4 * dpr);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('y', ox + 6 * dpr, 4 * dpr);
+
+    // tick labels
+    ctx.fillStyle = '#718096';
+    ctx.font = '10px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (var x = Math.ceil(X_MIN); x <= X_MAX; x++) {
+      if (x === 0) continue;
+      var px = tx(x);
+      ctx.beginPath(); ctx.moveTo(px, oy - 3 * dpr); ctx.lineTo(px, oy + 3 * dpr); ctx.stroke();
+      ctx.fillText(x, px, oy + 4 * dpr);
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (var y = Math.ceil(Y_MIN); y <= Y_MAX; y++) {
+      if (y === 0) continue;
+      var py = ty(y);
+      ctx.beginPath(); ctx.moveTo(ox - 3 * dpr, py); ctx.lineTo(ox + 3 * dpr, py); ctx.stroke();
+      ctx.fillText(y, ox - 5 * dpr, py);
+    }
+
+    // O label
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '10px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText('O', ox - 4 * dpr, oy + 4 * dpr);
+  }
+
+  // --- draw Parabola ---
+  function drawParabola(a, b, c) {
+    if (Math.abs(a) < 1e-9) return;
+    var cw = cssW, ch = cssH;
+
+    ctx.save();
+    ctx.strokeStyle = '#2b6cb0';
+    ctx.lineWidth = 3 * dpr;
+    ctx.shadowColor = 'rgba(43,108,176,0.15)';
+    ctx.shadowBlur = 6 * dpr;
+    ctx.beginPath();
+
+    var steps = Math.round(cw * 2); // sub-pixel sampling
+    var first = true;
+
+    for (var i = 0; i <= steps; i++) {
+      var px = (i / steps) * W;
+      var mathX = mx(px);
+      var yVal = a * mathX * mathX + b * mathX + c;
+      if (yVal < Y_MIN - 1 || yVal > Y_MAX + 1) {
+        first = true; continue;
+      }
+      var py = ty(yVal);
+      if (first) { ctx.moveTo(px, py); first = false; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  // --- draw linear (when a=0) ---
+  function drawLinear(b, c) {
+    ctx.save();
+    ctx.strokeStyle = '#2b6cb0';
+    ctx.lineWidth = 3 * dpr;
+    ctx.setLineDash([6 * dpr, 4 * dpr]);
+    ctx.beginPath();
+    var first = true;
+
+    if (b === 0) {
+      // constant function y = c: draw horizontal line
+      var py = ty(c);
+      if (py >= 0 && py <= H) {
+        ctx.moveTo(0, py);
+        ctx.lineTo(W, py);
+      }
+    } else {
+      var steps = Math.round(cssW * 2);
+      for (var i = 0; i <= steps; i++) {
+        var px = (i / steps) * W;
+        var mathX = mx(px);
+        var yVal = b * mathX + c;
+        if (yVal < Y_MIN - 1 || yVal > Y_MAX + 1) { first = true; continue; }
+        var py = ty(yVal);
+        if (first) { ctx.moveTo(px, py); first = false; }
+        else ctx.lineTo(px, py);
+      }
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // --- draw features: vertex, axis, roots ---
+  function drawFeatures(a, b, c) {
+    if (Math.abs(a) < 1e-9) return;
+    var vertexX = -b / (2 * a);
+    var vertexY = a * vertexX * vertexX + b * vertexX + c;
+    var delta = b * b - 4 * a * c;
+    var cw = cssW, ch = cssH;
+
+    // ---- axis of symmetry (dashed orange) ----
+    var axisPx = tx(vertexX);
+    ctx.save();
+    ctx.strokeStyle = '#dd6b20';
+    ctx.lineWidth = 1.5 * dpr;
+    ctx.setLineDash([5 * dpr, 5 * dpr]);
+    ctx.beginPath(); ctx.moveTo(axisPx, 0); ctx.lineTo(axisPx, H); ctx.stroke();
+    ctx.setLineDash([]);
+    // Axis label below canvas edge
+    ctx.fillStyle = '#dd6b20';
+    ctx.font = '11px "Times New Roman", serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('x = ' + vertexX.toFixed(2), axisPx, H - 2 * dpr);
+    ctx.restore();
+
+    // ---- vertex dot ----
+    var vPx = tx(vertexX);
+    var vPy = ty(vertexY);
+    // Only draw if visible
+    if (vertexY >= Y_MIN && vertexY <= Y_MAX) {
+      ctx.save();
+      // glow
+      var grad = ctx.createRadialGradient(vPx, vPy, 0, vPx, vPy, 14 * dpr);
+      grad.addColorStop(0, 'rgba(229,62,62,0.25)');
+      grad.addColorStop(1, 'rgba(229,62,62,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(vPx, vPy, 14 * dpr, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#e53e3e';
+      ctx.beginPath(); ctx.arc(vPx, vPy, 5 * dpr, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.beginPath(); ctx.arc(vPx, vPy, 5 * dpr, 0, Math.PI * 2); ctx.stroke();
+
+      // label
+      ctx.fillStyle = '#e53e3e';
+      ctx.font = '11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+      ctx.textAlign = 'center';
+      // Position label above or below the vertex depending on location
+      if (vertexX > X_MIN + 1 && vertexX < X_MAX - 1) {
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('(' + vertexX.toFixed(2) + ', ' + vertexY.toFixed(2) + ')', vPx, vPy - 8 * dpr);
+      }
+      ctx.restore();
+    }
+
+    // ---- roots ----
+    if (delta >= 0) {
+      var sqrtDelta = Math.sqrt(delta);
+      var x1 = (-b + sqrtDelta) / (2 * a);
+      var x2 = (-b - sqrtDelta) / (2 * a);
+      var roots = (Math.abs(x1 - x2) < 0.001) ? [x1] : [x1, x2];
+      var zeroY = ty(0);
+
+      ctx.save();
+      for (var ri = 0; ri < roots.length; ri++) {
+        var r = roots[ri];
+        if (r < X_MIN || r > X_MAX) continue;
+        var rPx = tx(r);
+
+        // glow
+        var rg = ctx.createRadialGradient(rPx, zeroY, 0, rPx, zeroY, 12 * dpr);
+        rg.addColorStop(0, 'rgba(56,161,105,0.2)');
+        rg.addColorStop(1, 'rgba(56,161,105,0)');
+        ctx.fillStyle = rg;
+        ctx.beginPath(); ctx.arc(rPx, zeroY, 12 * dpr, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = '#38a169';
+        ctx.beginPath(); ctx.arc(rPx, zeroY, 4 * dpr, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5 * dpr;
+        ctx.beginPath(); ctx.arc(rPx, zeroY, 4 * dpr, 0, Math.PI * 2); ctx.stroke();
+
+        // label below x-axis
+        ctx.fillStyle = '#38a169';
+        ctx.font = '11px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText('x = ' + r.toFixed(2), rPx, zeroY + 6 * dpr);
+      }
+      ctx.restore();
+    }
+  }
+
+  // ---- update info panel ----
+  function updateInfo(a, b, c) {
+    var isQuad = Math.abs(a) >= 1e-9;
+
+    // formula
+    formulaDisplay.innerHTML = fmtEq(a, b, c);
+    if (!isQuad) {
+      formulaDisplay.className = 'formula warning';
+      notQuad.className = 'not-quadratic show';
+    } else {
+      formulaDisplay.className = 'formula';
+      notQuad.className = 'not-quadratic';
+    }
+
+    // a slider danger state
+    if (a === 0) sliderA.classList.add('danger');
+    else sliderA.classList.remove('danger');
+
+    if (!isQuad) {
+      infoVertex.textContent = '—';
+      infoVertex.className = 'value na';
+      infoAxis.textContent = '—';
+      infoAxis.className = 'value na';
+      infoDelta.textContent = '—';
+      infoDelta.className = 'value na';
+      if (Math.abs(b) > 1e-9) {
+        infoRoots.textContent = 'x = ' + (-c / b).toFixed(2);
+        infoRoots.className = 'value root';
+        infoDir.textContent = '线性函数';
+        infoDir.className = 'value na';
+      } else {
+        infoRoots.textContent = 'y = ' + c.toFixed(2) + '（常数）';
+        infoRoots.className = 'value na';
+        infoDir.textContent = '常数函数';
+        infoDir.className = 'value na';
+      }
+      return;
+    }
+
+    var vertexX = -b / (2 * a);
+    var vertexY = a * vertexX * vertexX + b * vertexX + c;
+    var delta = b * b - 4 * a * c;
+
+    infoVertex.textContent = '(' + vertexX.toFixed(2) + ', ' + vertexY.toFixed(2) + ')';
+    infoVertex.className = 'value highlight';
+    infoAxis.textContent = 'x = ' + vertexX.toFixed(2);
+    infoAxis.className = 'value highlight';
+    infoDir.textContent = a > 0 ? '向上（有最小值）' : '向下（有最大值）';
+    infoDir.className = 'value';
+
+    // Delta
+    infoDelta.textContent = delta.toFixed(2);
+    infoDelta.className = 'value';
+    if (delta > 0) infoDelta.classList.add('delta-pos');
+    else if (delta === 0) infoDelta.classList.add('delta-zero');
+    else infoDelta.classList.add('delta-neg');
+
+    // Roots
+    if (delta > 0) {
+      var sqrtDelta = Math.sqrt(delta);
+      var x1 = (-b + sqrtDelta) / (2 * a);
+      var x2 = (-b - sqrtDelta) / (2 * a);
+      if (Math.abs(x1 - x2) < 0.001) {
+        infoRoots.textContent = 'x = ' + x1.toFixed(2) + '（二重根）';
+      } else {
+        infoRoots.textContent = 'x₁ = ' + x1.toFixed(2) + ', x₂ = ' + x2.toFixed(2);
+      }
+      infoRoots.className = 'value root';
+    } else if (delta === 0) {
+      var x0 = -b / (2 * a);
+      infoRoots.textContent = 'x = ' + x0.toFixed(2) + '（二重根）';
+      infoRoots.className = 'value root';
+    } else {
+      infoRoots.innerHTML = '无实数根（Δ < 0）';
+      infoRoots.className = 'value delta-neg';
+    }
+  }
+
+  // ---- main draw ----
+  function draw() {
+    var a = parseFloat(sliderA.value);
+    var b = parseFloat(sliderB.value);
+    var c = parseFloat(sliderC.value);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+
+    // Clip to prevent drawing outside
+    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+
+    drawGrid();
+
+    if (Math.abs(a) >= 1e-9) {
+      drawParabola(a, b, c);
+      drawFeatures(a, b, c);
+    } else {
+      drawLinear(b, c);
+    }
+
+    ctx.restore();
+    updateInfo(a, b, c);
+  }
+
+  // ---- presets ----
+  function setSliders(a, b, c) {
+    sliderA.value = a;
+    sliderB.value = b;
+    sliderC.value = c;
+    valA.textContent = a.toFixed(1);
+    valB.textContent = b.toFixed(1);
+    valC.textContent = c.toFixed(1);
+    draw();
+  }
+
+  // ---- slider events ----
+  function onSliderChange() {
+    valA.textContent = parseFloat(sliderA.value).toFixed(1);
+    valB.textContent = parseFloat(sliderB.value).toFixed(1);
+    valC.textContent = parseFloat(sliderC.value).toFixed(1);
+    draw();
+  }
+
+  sliderA.addEventListener('input', onSliderChange);
+  sliderB.addEventListener('input', onSliderChange);
+  sliderC.addEventListener('input', onSliderChange);
+
+  document.getElementById('btnReset').addEventListener('click', function() { setSliders(1, 0, 0); });
+  document.getElementById('btnPreset1').addEventListener('click', function() { setSliders(1, 0, 0); });
+  document.getElementById('btnPreset2').addEventListener('click', function() { setSliders(1, 2, 1); });
+  document.getElementById('btnPreset3').addEventListener('click', function() { setSliders(-1, 0, 4); });
+
+  // keyboard shortcut
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'r' || e.key === 'R') setSliders(1, 0, 0);
+  });
+
+  // ---- resize ----
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+})();
+</script>
+</body>
+</html>

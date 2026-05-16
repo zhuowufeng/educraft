@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凸透镜成像规律 - 交互式物理教学</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #f0f2f5;
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+  color: #333;
+  padding: 20px;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 24px 24px 20px;
+}
+h1 {
+  font-size: 26px;
+  color: #1a237e;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.case-banner {
+  text-align: center;
+  margin-bottom: 12px;
+  padding: 6px 16px;
+  background: #e8eaf6;
+  border-radius: 20px;
+  color: #283593;
+  font-size: 17px;
+  font-weight: 600;
+}
+.case-banner .highlight {
+  color: #e53935;
+  font-weight: 700;
+}
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  touch-action: none;
+}
+canvas#lensCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 820/360;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fefefe;
+  cursor: pointer;
+}
+.values-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 16px;
+  background: #f8f9fc;
+  border-radius: 10px;
+  border: 1px solid #e8eaf0;
+  align-items: center;
+  justify-content: space-around;
+}
+.values-bar .item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+.values-bar .item .vlabel {
+  font-size: 13px;
+  color: #888;
+}
+.values-bar .item .vvalue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a237e;
+  font-family: "Courier New", monospace;
+}
+.values-bar .item .vtag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.vtag.real { background: #ffebee; color: #c62828; }
+.vtag.virtual { background: #e8f5e9; color: #2e7d32; }
+.vtag.upright { background: #e8f5e9; color: #2e7d32; }
+.vtag.inverted { background: #ffebee; color: #c62828; }
+.vtag.magnified { background: #fff3e0; color: #e65100; }
+.vtag.diminished { background: #e3f2fd; color: #1565c0; }
+.vtag.equal { background: #f3e5f5; color: #7b1fa2; }
+.vtag.no-image { background: #eee; color: #888; }
+
+.controls {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #f8f9fc;
+  border-radius: 10px;
+  border: 1px solid #e8eaf0;
+}
+.controls .slider-label {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+.controls input[type="range"] {
+  flex: 1;
+  min-width: 100px;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ddd;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+.controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #1a237e;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.controls input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #1a237e;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.controls .dist-display {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a237e;
+  min-width: 80px;
+  text-align: center;
+}
+.controls .dist-label {
+  font-size: 13px;
+  color: #888;
+}
+
+.table-wrap {
+  margin-top: 14px;
+  overflow-x: auto;
+}
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: center;
+}
+.summary-table th {
+  background: #1a237e;
+  color: #fff;
+  padding: 8px 6px;
+  font-weight: 600;
+}
+.summary-table td {
+  padding: 8px 6px;
+  border: 1px solid #ddd;
+}
+.summary-table tr:nth-child(even) td { background: #f8f9fc; }
+.summary-table .case-label {
+  font-weight: 700;
+  color: #1a237e;
+}
+.summary-table .highlight-row td {
+  background: #fff8e1;
+  font-weight: 600;
+}
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  justify-content: center;
+}
+.legend .leg-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+.legend .leg-line {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+  .container { padding: 12px; }
+  .values-bar { justify-content: flex-start; }
+  .values-bar .item { font-size: 12px; }
+  .values-bar .item .vvalue { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>凸透镜成像规律</h1>
+
+  <div class="case-banner" id="caseBanner">
+    当前成像情况：<span class="highlight" id="caseDescription">物距 u &gt; 2f — 倒立、缩小、实像</span>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="lensCanvas" width="820" height="360"></canvas>
+  </div>
+
+  <div class="values-bar" id="valuesBar">
+    <div class="item">
+      <span class="vlabel">物距 u =</span>
+      <span class="vvalue" id="uDisplay">240.0</span>
+      <span class="vlabel">px</span>
+    </div>
+    <div class="item">
+      <span class="vlabel">像距 v =</span>
+      <span class="vvalue" id="vDisplay">120.0</span>
+      <span class="vlabel">px</span>
+    </div>
+    <div class="item">
+      <span class="vlabel">放大率 |M| =</span>
+      <span class="vvalue" id="MDisplay">0.500</span>
+    </div>
+    <div class="item">
+      <span class="vtag" id="tagOrientation">倒立</span>
+      <span class="vtag" id="tagSize">缩小</span>
+      <span class="vtag" id="tagNature">实像</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span class="dist-label">u =</span>
+    <span class="dist-display" id="sliderUDisp">240.0 px</span>
+    <input type="range" id="uSlider" min="18" max="400" value="240" step="0.5">
+    <span class="slider-label" style="margin-left:8px;">焦距 f = 80 px</span>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><span class="leg-line" style="background:#e53935;"></span> 平行光线（过焦点）</div>
+    <div class="leg-item"><span class="leg-line" style="background:#1e88e5;"></span> 过光心光线</div>
+    <div class="leg-item"><span class="leg-line" style="background:#43a047;"></span> 过焦点光线（平行射出）</div>
+    <div class="leg-item"><span class="leg-line" style="background:#aaa;border-top:2px dashed #aaa;height:0;"></span> 反向延长线（虚像）</div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="summary-table">
+      <thead>
+        <tr><th>物距条件</th><th>像距条件</th><th>像的性质</th><th>应用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="case-label">u &gt; 2f</td><td>f &lt; v &lt; 2f</td><td>倒立、缩小、实像</td><td>照相机</td></tr>
+        <tr><td class="case-label">u = 2f</td><td>v = 2f</td><td>倒立、等大、实像</td><td>测焦距</td></tr>
+        <tr><td class="case-label">f &lt; u &lt; 2f</td><td>v &gt; 2f</td><td>倒立、放大、实像</td><td>投影仪 / 幻灯机</td></tr>
+        <tr><td class="case-label">u = f</td><td>—</td><td>不成像（平行光射出）</td><td>平行光源 / 探照灯</td></tr>
+        <tr><td class="case-label">u &lt; f</td><td>|v| &gt; u</td><td>正立、放大、虚像</td><td>放大镜</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const canvas = document.getElementById('lensCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 820, H = 360;
+
+  // geometry
+  const LENS_X = 410;   // lens center x
+  const AXIS_Y = 220;   // optical axis y
+  const F = 80;          // focal length in px
+  const F2 = 160;        // 2f
+  const OBJ_H = 72;      // object height px
+
+  // state
+  let u = 240;            // object distance from lens
+  let isDragging = false;
+  let dragOffsetX = 0;
+
+  // DOM
+  const caseBanner = document.getElementById('caseBanner');
+  const caseDesc = document.getElementById('caseDescription');
+  const uDisplay = document.getElementById('uDisplay');
+  const vDisplay = document.getElementById('vDisplay');
+  const MDisplay = document.getElementById('MDisplay');
+  const tagOrient = document.getElementById('tagOrientation');
+  const tagSize = document.getElementById('tagSize');
+  const tagNature = document.getElementById('tagNature');
+  const uSlider = document.getElementById('uSlider');
+  const sliderUDisp = document.getElementById('sliderUDisp');
+
+  // --- physics ---
+  function computeImage(_u) {
+    if (Math.abs(_u - F) < 0.5) {
+      return { v: Infinity, M: Infinity, nature: 'no-image' };
+    }
+    const v = _u * F / (_u - F);
+    const M = -v / _u;
+    let nature = 'real';
+    if (v < 0) nature = 'virtual';
+    return { v, M, nature };
+  }
+
+  function getCase(_u) {
+    if (Math.abs(_u - F) < 0.5) return 'u=f';
+    if (_u < F) return 'u<f';
+    if (Math.abs(_u - F2) < 0.5) return 'u=2f';
+    if (_u > F2) return 'u>2f';
+    return 'f<u<2f';
+  }
+
+  function describeCase(_u) {
+    const c = getCase(_u);
+    switch (c) {
+      case 'u>2f': return '物距 u > 2f — 倒立、缩小、实像（照相机原理）';
+      case 'u=2f': return '物距 u = 2f — 倒立、等大、实像（测焦距）';
+      case 'f<u<2f': return 'f < u < 2f — 倒立、放大、实像（投影仪原理）';
+      case 'u=f': return 'u = f — 不成像（平行光射出）';
+      case 'u<f': return 'u < f — 正立、放大、虚像（放大镜原理）';
+    }
+  }
+
+  // --- canvas drawing ---
+  function drawScene() {
+    ctx.clearRect(0, 0, W, H);
+
+    // ---- optical axis ----
+    ctx.save();
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(12, AXIS_Y);
+    ctx.lineTo(W-12, AXIS_Y);
+    ctx.stroke();
+    ctx.restore();
+
+    // ---- markers on axis (tick marks) ----
+    ctx.save();
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#666';
+    ctx.font = '13px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    // F markers
+    [-F2, -F, F, F2].forEach(offset => {
+      const x = LENS_X + offset;
+      ctx.beginPath();
+      ctx.moveTo(x, AXIS_Y-5);
+      ctx.lineTo(x, AXIS_Y+5);
+      ctx.stroke();
+    });
+
+    // labels: these need to be in the complex part, careful about overlap
+    // draw labels at axis level
+    ctx.textBaseline = 'top';
+    ctx.fillText('2F', LENS_X - F2, AXIS_Y+7);
+    ctx.fillText('F', LENS_X - F, AXIS_Y+7);
+    ctx.fillText('F\'', LENS_X + F, AXIS_Y+7);
+    ctx.fillText('2F\'', LENS_X + F2, AXIS_Y+7);
+    ctx.restore();
+
+    // ---- lens (convex shape) ----
+    ctx.save();
+    ctx.strokeStyle = '#1a237e';
+    ctx.lineWidth = 3;
+    ctx.fillStyle = 'rgba(26,35,126,0.08)';
+    const lensHalfH = 135;
+    // convex shape: two arcs forming a biconvex lens
+    ctx.beginPath();
+    // left arc
+    ctx.arc(LENS_X - 18, AXIS_Y, 60, -0.55, 0.55, false);
+    // right arc
+    ctx.arc(LENS_X + 18, AXIS_Y, 60, Math.PI-0.55, Math.PI+0.55, false);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // vertical center line
+    ctx.strokeStyle = 'rgba(26,35,126,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,4]);
+    ctx.beginPath();
+    ctx.moveTo(LENS_X, AXIS_Y - lensHalfH);
+    ctx.lineTo(LENS_X, AXIS_Y + 4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // double arrow symbol
+    ctx.fillStyle = '#1a237e';
+    ctx.font = '22px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⇔', LENS_X, AXIS_Y - lensHalfH - 16);
+    ctx.restore();
+
+    // ---- object (arrow / candle) ----
+    const objX = LENS_X - u;
+    const objTipY = AXIS_Y - OBJ_H;
+    ctx.save();
+    // candle body
+    const candleW = 14;
+    ctx.fillStyle = '#fff3e0';
+    ctx.strokeStyle = '#bf8f4a';
+    ctx.lineWidth = 1.5;
+    roundRect(ctx, objX - candleW/2, AXIS_Y - OBJ_H + 14, candleW, OBJ_H - 14, 3);
+    ctx.fill(); ctx.stroke();
+    // wax lines
+    ctx.strokeStyle = 'rgba(191,143,74,0.3)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < 3; i++) {
+      const yy = AXIS_Y - OBJ_H + 20 + i*12;
+      ctx.beginPath();
+      ctx.moveTo(objX - candleW/2 + 2, yy);
+      ctx.lineTo(objX + candleW/2 - 2, yy);
+      ctx.stroke();
+    }
+    // flame
+    ctx.save();
+    const flameCX = objX;
+    const flameBY = AXIS_Y - OBJ_H + 14;
+    const grad = ctx.createRadialGradient(flameCX, flameBY-6, 2, flameCX, flameBY-4, 10);
+    grad.addColorStop(0, '#fff9c4');
+    grad.addColorStop(0.3, '#ff9800');
+    grad.addColorStop(0.7, '#f44336');
+    grad.addColorStop(1, 'rgba(244,67,54,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(flameCX, flameBY-6, 5, 10, 0, 0, Math.PI*2);
+    ctx.fill();
+    // inner glow
+    ctx.fillStyle = '#fff9c4';
+    ctx.beginPath();
+    ctx.ellipse(flameCX, flameBY-8, 2, 5, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+    // label
+    ctx.fillStyle = '#5d4037';
+    ctx.font = '12px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('物体', objX, AXIS_Y + 6);
+    ctx.restore();
+
+    // ---- compute image ----
+    const result = computeImage(u);
+    const isNoImage = result.nature === 'no-image';
+
+    let imgX, imgTipY, imgH, displayV, displayM;
+
+    if (!isNoImage) {
+      const v = result.v;
+      const M = result.M;
+      displayV = v;
+      displayM = Math.abs(M);
+      imgH = Math.abs(M) * OBJ_H;
+      if (v > 0) {
+        // real image: right of lens, inverted
+        imgX = LENS_X + v;
+        imgTipY = AXIS_Y + imgH;
+      } else {
+        // virtual image: left of lens, upright
+        imgX = LENS_X + v; // v < 0, so left of lens
+        imgTipY = AXIS_Y - imgH;
+      }
+
+      // ---- draw image ----
+      ctx.save();
+      if (v > 0) {
+        // real image: solid red arrow
+        ctx.strokeStyle = '#c62828';
+        ctx.fillStyle = '#ef5350';
+        ctx.lineWidth = 2.5;
+      } else {
+        // virtual image: dashed green arrow
+        ctx.strokeStyle = '#2e7d32';
+        ctx.fillStyle = '#66bb6a';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5,4]);
+      }
+      // arrow
+      ctx.beginPath();
+      ctx.moveTo(imgX, AXIS_Y);
+      ctx.lineTo(imgX, imgTipY);
+      ctx.stroke();
+      if (v > 0) {
+        // arrowhead pointing up (inverted, so tip is below axis)
+        ctx.beginPath();
+        ctx.moveTo(imgX, imgTipY);
+        ctx.lineTo(imgX-6, imgTipY-10);
+        ctx.lineTo(imgX+6, imgTipY-10);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        // arrowhead pointing up (upright, tip is above axis)
+        ctx.beginPath();
+        ctx.moveTo(imgX, imgTipY);
+        ctx.lineTo(imgX-6, imgTipY+10);
+        ctx.lineTo(imgX+6, imgTipY+10);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.setLineDash([]);
+      // label
+      ctx.font = '12px "Microsoft YaHei","PingFang SC",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = v > 0 ? '#c62828' : '#2e7d32';
+      ctx.fillText('像', imgX, AXIS_Y + (v > 0 ? imgH + 14 : -imgH - 6));
+      ctx.restore();
+    }
+
+    // ---- draw rays ----
+    drawRays(objX, objTipY, result, imgX, imgTipY);
+
+    // ---- case region labels ----
+    ctx.save();
+    ctx.font = '12px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    // mark regions on axis below the object region
+    const regionY = AXIS_Y + 44;
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.font = '11px "Microsoft YaHei","PingFang SC",sans-serif';
+    // u>2f region
+    ctx.fillText('u>2f', (20 + LENS_X - F2)/2, regionY);
+    // u=2f
+    ctx.fillText('u=2f', LENS_X - F2, regionY-14);
+    // f<u<2f
+    ctx.fillText('f<u<2f', (LENS_X - F2 + LENS_X - F)/2, regionY);
+    // u=f
+    ctx.fillText('u=f', LENS_X - F, regionY-14);
+    // u<f
+    ctx.fillText('u<f', (LENS_X - F + 10)/2, regionY);
+    ctx.restore();
+
+    // ---- update UI ----
+    updateUI(result, isNoImage, imgX, imgTipY);
+  }
+
+  function drawRays(objX, objTipY, result, imgX, imgTipY) {
+    const isNoImage = result.nature === 'no-image';
+    const v = isNoImage ? Infinity : result.v;
+    const M = isNoImage ? Infinity : result.M;
+
+    // colors: R1=red, R2=blue, R3=green
+    const R1 = '#e53935';
+    const R2 = '#1e88e5';
+    const R3 = '#43a047';
+    const dash = [6,5];
+
+    const margin = 12;
+    const maxRight = W - margin;
+    const maxLeft = margin;
+
+    // clip ray drawing to canvas bounds
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, W, H);
+    ctx.clip();
+
+    function clipY(y) { return Math.max(-200, Math.min(H + 200, y)); }
+
+    // ---- RAY 1: parallel → through F' ----
+    ctx.save();
+    ctx.strokeStyle = R1;
+    ctx.lineWidth = 2;
+    // before lens: horizontal
+    ctx.beginPath();
+    ctx.moveTo(objX, objTipY);
+    ctx.lineTo(LENS_X, objTipY);
+    ctx.stroke();
+
+    const slope1 = (AXIS_Y - objTipY) / F; // OBJ_H / F
+
+    if (isNoImage) {
+      const endX = maxRight;
+      const endY = clipY(objTipY + slope1 * (endX - LENS_X));
+      ctx.beginPath();
+      ctx.moveTo(LENS_X, objTipY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    } else if (v > 0) {
+      // real
+      const endX = Math.min(maxRight, imgX + 120);
+      const endY = clipY(objTipY + slope1 * (endX - LENS_X));
+      ctx.beginPath();
+      ctx.moveTo(LENS_X, objTipY);
+      ctx.lineTo(imgX, imgTipY);
+      ctx.stroke();
+      if (endX > imgX) {
+        ctx.beginPath();
+        ctx.moveTo(imgX, imgTipY);
+        ctx.lineTo(endX, clipY(imgTipY + slope1 * (endX - imgX)));
+        ctx.stroke();
+      }
+    } else {
+      // virtual: solid after lens, dashed backward
+      ctx.beginPath();
+      ctx.moveTo(LENS_X, objTipY);
+      ctx.lineTo(maxRight, clipY(objTipY + slope1 * (maxRight - LENS_X)));
+      ctx.stroke();
+      // backward extension from left edge through lens
+      ctx.strokeStyle = R1;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash(dash);
+      const extY1 = clipY(objTipY + slope1 * (maxLeft - LENS_X));
+      ctx.beginPath();
+      ctx.moveTo(maxLeft, extY1);
+      ctx.lineTo(LENS_X, objTipY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.restore();
+
+    // ---- RAY 2: through center (straight) ----
+    ctx.save();
+    ctx.strokeStyle = R2;
+    ctx.lineWidth = 2;
+    const slope2 = (AXIS_Y - objTipY) / (LENS_X - objX); // OBJ_H / u
+
+    if (isNoImage) {
+      const endX = maxRight;
+      const endY = clipY(AXIS_Y + slope2 * (endX - LENS_X));
+      ctx.beginPath();
+      ctx.moveTo(objX, objTipY);
+      ctx.lineTo(LENS_X, AXIS_Y);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    } else if (v > 0) {
+      const endX = Math.min(maxRight, imgX + 120);
+      const endY = clipY(AXIS_Y + slope2 * (endX - LENS_X));
+      ctx.beginPath();
+      ctx.moveTo(objX, objTipY);
+      ctx.lineTo(LENS_X, AXIS_Y);
+      ctx.lineTo(imgX, imgTipY);
+      ctx.stroke();
+      if (endX > imgX) {
+        ctx.beginPath();
+        ctx.moveTo(imgX, imgTipY);
+        ctx.lineTo(endX, clipY(imgTipY + slope2 * (endX - imgX)));
+        ctx.stroke();
+      }
+    } else {
+      // virtual
+      ctx.beginPath();
+      ctx.moveTo(objX, objTipY);
+      ctx.lineTo(LENS_X, AXIS_Y);
+      ctx.lineTo(maxRight, clipY(AXIS_Y + slope2 * (maxRight - LENS_X)));
+      ctx.stroke();
+      // backward extension
+      ctx.strokeStyle = R2;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash(dash);
+      const extY2 = clipY(AXIS_Y + slope2 * (maxLeft - LENS_X));
+      ctx.beginPath();
+      ctx.moveTo(maxLeft, extY2);
+      ctx.lineTo(LENS_X, AXIS_Y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.restore();
+
+    // ---- RAY 3: through F → parallel ----
+    ctx.save();
+    ctx.strokeStyle = R3;
+    ctx.lineWidth = 2;
+
+    const slope3_num = AXIS_Y - objTipY; // OBJ_H
+    const slope3_den = (LENS_X - F) - objX; // u-F: positive when u>F, negative when u<F
+
+    if (Math.abs(slope3_den) > 0.5 && isFinite(slope3_num / slope3_den)) {
+      // Valid ray: not too close to parallel to axis at the lens
+      const slope3 = slope3_num / slope3_den;
+      const yAtLens = objTipY + slope3 * (LENS_X - objX);
+
+      if (isFinite(yAtLens)) {
+        // before lens
+        ctx.beginPath();
+        ctx.moveTo(objX, objTipY);
+        ctx.lineTo(LENS_X, clipY(yAtLens));
+        ctx.stroke();
+
+        if (isNoImage) {
+          ctx.beginPath();
+          ctx.moveTo(LENS_X, clipY(yAtLens));
+          ctx.lineTo(maxRight, clipY(yAtLens));
+          ctx.stroke();
+        } else if (v > 0) {
+          ctx.beginPath();
+          ctx.moveTo(LENS_X, clipY(yAtLens));
+          ctx.lineTo(imgX, imgTipY);
+          ctx.stroke();
+          const endX3 = Math.min(maxRight, imgX + 120);
+          ctx.beginPath();
+          ctx.moveTo(imgX, imgTipY);
+          ctx.lineTo(endX3, imgTipY);
+          ctx.stroke();
+        } else {
+          // virtual
+          ctx.beginPath();
+          ctx.moveTo(LENS_X, clipY(yAtLens));
+          ctx.lineTo(maxRight, clipY(yAtLens));
+          ctx.stroke();
+          // backward extension dashed
+          ctx.strokeStyle = R3;
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash(dash);
+          ctx.beginPath();
+          ctx.moveTo(maxLeft, clipY(yAtLens));
+          ctx.lineTo(LENS_X, clipY(yAtLens));
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+    } else if (Math.abs(slope3_den) <= 0.5) {
+      // u ≈ F: ray through F is nearly vertical at lens; draw a simplified version
+      // just draw a line from object tip toward F direction that goes to the lens
+      // This is near the no-image case, so it's ok to approximate
+      const approxY = objTipY + (AXIS_Y - objTipY) * (LENS_X - objX) / 0.5;
+      ctx.beginPath();
+      ctx.moveTo(objX, objTipY);
+      ctx.lineTo(LENS_X, clipY(approxY));
+      ctx.stroke();
+      if (isNoImage) {
+        ctx.beginPath();
+        ctx.moveTo(LENS_X, clipY(approxY));
+        ctx.lineTo(maxRight, clipY(approxY));
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+
+    // ---- F and 2F vertical reference lines ----
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2,4]);
+    [-F2, -F, F, F2].forEach(offset => {
+      const x = LENS_X + offset;
+      ctx.beginPath();
+      ctx.moveTo(x, 10);
+      ctx.lineTo(x, H-10);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // restore clip
+    ctx.restore();
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y);
+    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r);
+    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h);
+    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r);
+    ctx.quadraticCurveTo(x, y, x+r, y);
+    ctx.closePath();
+  }
+
+  // --- UI update ---
+  function updateUI(result, isNoImage, imgX, imgTipY) {
+    uDisplay.textContent = u.toFixed(1);
+    sliderUDisp.textContent = u.toFixed(1) + ' px';
+
+    if (isNoImage) {
+      vDisplay.textContent = '∞';
+      MDisplay.textContent = '—';
+      tagOrient.textContent = '不成像';
+      tagOrient.className = 'vtag no-image';
+      tagSize.textContent = '—';
+      tagSize.className = 'vtag no-image';
+      tagNature.textContent = '平行光';
+      tagNature.className = 'vtag no-image';
+      caseDesc.textContent = describeCase(u);
+      return;
+    }
+
+    const v = result.v;
+    const M = result.M;
+    const mAbs = Math.abs(M);
+
+    vDisplay.textContent = (Math.abs(v) > 5000 ? '>5000' : v.toFixed(1));
+    MDisplay.textContent = (mAbs > 100 ? '>100' : mAbs.toFixed(3));
+
+    // orientation
+    if (M > 0) {
+      tagOrient.textContent = '正立';
+      tagOrient.className = 'vtag upright';
+    } else {
+      tagOrient.textContent = '倒立';
+      tagOrient.className = 'vtag inverted';
+    }
+
+    // size
+    if (Math.abs(mAbs - 1) < 0.01) {
+      tagSize.textContent = '等大';
+      tagSize.className = 'vtag equal';
+    } else if (mAbs > 1) {
+      tagSize.textContent = '放大';
+      tagSize.className = 'vtag magnified';
+    } else {
+      tagSize.textContent = '缩小';
+      tagSize.className = 'vtag diminished';
+    }
+
+    // nature
+    if (v > 0) {
+      tagNature.textContent = '实像';
+      tagNature.className = 'vtag real';
+    } else {
+      tagNature.textContent = '虚像';
+      tagNature.className = 'vtag virtual';
+    }
+
+    caseDesc.textContent = describeCase(u);
+  }
+
+  // --- interaction ---
+  function getObjXFromMouse(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const ce = e.touches ? e.touches[0] : e;
+    const mx = (ce.clientX - rect.left) * scaleX;
+    // constrain: 15px from left edge to just before lens center
+    const minX = 15;
+    const maxX = LENS_X - 6;
+    let x = Math.max(minX, Math.min(maxX, mx));
+    return x;
+  }
+
+  function pointerDown(e) {
+    e.preventDefault();
+    const ce = e.touches ? e.touches[0] : e;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const mx = (ce.clientX - rect.left) * scaleX;
+
+    // Check if click is near the object
+    const objX = LENS_X - u;
+    if (Math.abs(mx - objX) < 30) {
+      isDragging = true;
+    } else {
+      // Jump object to click position
+      const newObjX = getObjXFromMouse(e);
+      u = LENS_X - newObjX;
+      if (u < 6) u = 6;
+      if (u > 410) u = 410;
+      uSlider.value = u;
+      drawScene();
+    }
+  }
+
+  function pointerMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const newObjX = getObjXFromMouse(e);
+    u = LENS_X - newObjX;
+    if (u < 6) u = 6;
+    if (u > 410) u = 410;
+    uSlider.value = u;
+    drawScene();
+  }
+
+  function pointerUp(e) {
+    isDragging = false;
+  }
+
+  canvas.addEventListener('mousedown', pointerDown);
+  canvas.addEventListener('mousemove', pointerMove);
+  document.addEventListener('mouseup', pointerUp);
+  canvas.addEventListener('touchstart', pointerDown, {passive:false});
+  canvas.addEventListener('touchmove', pointerMove, {passive:false});
+  document.addEventListener('touchend', pointerUp);
+
+  // slider
+  uSlider.addEventListener('input', function() {
+    u = parseFloat(this.value);
+    drawScene();
+  });
+
+  // --- init ---
+  drawScene();
+})();
+</script>
+</body>
+</html>

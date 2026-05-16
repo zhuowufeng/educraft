@@ -1,0 +1,99 @@
+<section class="section page-header page-header-compact">
+    <div class="container">
+        <h1>AI 课件生成</h1>
+        <p>用自然语言描述您需要的课件，AI 将为您生成高质量的交互式教学课件</p>
+    </div>
+</section>
+
+<section class="section generate-page">
+    <div class="container">
+        <div class="generate-layout">
+            <div class="generate-form-card">
+                <form id="generateForm" class="generate-form">
+                    <div class="form-group">
+                        <label for="prompt">描述您需要的课件</label>
+                        <textarea id="prompt" name="prompt" rows="5" placeholder="例如：帮我制作一个凸透镜成像的交互演示课件，物距可以拖拽调整，能够实时显示成像的位置、大小、倒正和虚实变化..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subject">学科</label>
+                            <select id="subject" name="subject">
+                                <option value="数学">数学</option>
+                                <option value="物理">物理</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade">学段</label>
+                            <select id="grade" name="grade">
+                                <option value="初中">初中</option>
+                                <option value="高中">高中</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="generateBtn">
+                        <span>✦ 开始生成</span>
+                    </button>
+                </form>
+                <div id="generateResult" class="generate-result" style="display:none"></div>
+            </div>
+            <div class="generate-tips">
+                <h3>描述技巧</h3>
+                <div class="tip-card">
+                    <h4>好的描述范例</h4>
+                    <p>"制作一个二次函数 y=ax²+bx+c 的图像演示课件，a、b、c 可以用滑块调整，显示顶点坐标和对称轴"</p>
+                </div>
+                <div class="tip-card">
+                    <h4>更具体的描述</h4>
+                    <p>"凸透镜成像规律演示，物距可拖拽，显示成像位置、大小、倒正和虚实，标注 u>2f、u=2f 等关键位置"</p>
+                </div>
+                <div class="tip-card">
+                    <h4>您可以描述的内容</h4>
+                    <ul>
+                        <li>学科和知识点</li>
+                        <li>需要哪些交互功能</li>
+                        <li>适合什么学段</li>
+                        <li>希望展示哪些数据</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('generateForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('generateBtn');
+    const result = document.getElementById('generateResult');
+    const formData = {
+        prompt: document.getElementById('prompt').value,
+        subject: document.getElementById('subject').value,
+        grade: document.getElementById('grade').value
+    };
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ 正在生成...</span>';
+    try {
+        const res = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        const data = await res.json();
+        if (data.success) {
+            result.style.display = 'block';
+            result.className = 'generate-result success';
+            result.innerHTML = '<div class="result-icon">✅</div><h3>请求已提交</h3><p>' + data.message + '</p>';
+            document.getElementById('generateForm').reset();
+        } else {
+            throw new Error(data.error || '生成失败');
+        }
+    } catch (err) {
+        result.style.display = 'block';
+        result.className = 'generate-result error';
+        result.innerHTML = '<div class="result-icon">❌</div><h3>提交失败</h3><p>' + err.message + '</p>';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✦ 开始生成</span>';
+    }
+});
+</script>

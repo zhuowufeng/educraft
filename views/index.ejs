@@ -1,0 +1,130 @@
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">AI 赋能教育</div>
+            <h1 class="hero-title">用 AI 打造<br>交互式教学课件</h1>
+            <p class="hero-desc">EduCraft 智课工坊 — 面向中小学教师的 AI 课件生成平台。<br>自然语言描述需求，即刻生成高质量的交互式课件，让备课更轻松。</p>
+            <div class="hero-actions">
+                <a href="/generate" class="btn btn-primary btn-lg">
+                    <span>✦ 开始生成</span>
+                </a>
+                <a href="/library" class="btn btn-secondary btn-lg">
+                    <span>浏览课件库</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-cards">
+                <div class="hero-card" style="--i:0">
+                    <div class="hero-card-icon">📐</div>
+                    <div>二次函数图像</div>
+                </div>
+                <div class="hero-card" style="--i:1">
+                    <div class="hero-card-icon">🔬</div>
+                    <div>凸透镜成像</div>
+                </div>
+                <div class="hero-card" style="--i:2">
+                    <div class="hero-card-icon">📊</div>
+                    <div>概率统计</div>
+                </div>
+                <div class="hero-card" style="--i:3">
+                    <div class="hero-card-icon">⚡</div>
+                    <div>物理模拟</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section features">
+    <div class="container">
+        <h2 class="section-title">为什么选择 EduCraft</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI 智能生成</h3>
+                <p>用自然语言描述您的教学需求，AI 自动生成高质量的交互课件，节省备课时间。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <h3>交互式学习</h3>
+                <p>拖拽、滑块、动画、实时反馈，让抽象概念变得直观可感，学生可以动手探索。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📥</div>
+                <h3>即点即用</h3>
+                <p>生成的课件为独立 HTML 文件，无需安装任何软件，发送给学生即可打开使用。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>迭代优化</h3>
+                <p>不满意可以继续描述修改意见，AI 会根据您的反馈持续优化，直到满意为止。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>丰富模板库</h3>
+                <p>内置覆盖初中数理核心知识点的精品课件模板，可直接使用或在此基础上修改。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>精准匹配课标</h3>
+                <p>所有课件内容严格遵循国家课程标准，确保教学内容准确、规范。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section featured-courseware">
+    <div class="container">
+        <h2 class="section-title">精品课件推荐</h2>
+        <p class="section-desc">覆盖初中数学和物理核心知识点，每一份都是课堂可用的成品</p>
+        <div class="courseware-grid">
+            <% library.filter(c => c.featured).forEach(function(cw) { %>
+            <a href="/view/<%= cw.id %>" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject <%= cw.subject %>"><%= cw.subject %></span>
+                    <span class="courseware-grade"><%= cw.grade %></span>
+                </div>
+                <h3 class="courseware-title"><%= cw.title %></h3>
+                <p class="courseware-desc"><%= cw.description %></p>
+                <div class="courseware-tags">
+                    <% cw.tags.slice(0, 3).forEach(function(tag) { %>
+                    <span class="tag"><%= tag %></span>
+                    <% }) %>
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            <% }) %>
+        </div>
+        <div class="section-actions">
+            <a href="/library" class="btn btn-secondary">查看全部课件 →</a>
+        </div>
+    </div>
+</section>
+
+<section class="section how-it-works">
+    <div class="container">
+        <h2 class="section-title">三步搞定备课</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>描述需求</h3>
+                <p>用自然语言告诉 AI 您需要什么样的课件，比如"帮我做一个凸透镜成像的交互演示"</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>AI 生成</h3>
+                <p>AI 自动生成高质量的交互式 HTML 课件，支持预览和实时交互</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>下载使用</h3>
+                <p>下载课件文件，直接发给学生或在课堂上展示，也可以继续优化迭代</p>
+            </div>
+        </div>
+    </div>
+</section>

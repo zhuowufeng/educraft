@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概率统计模拟器</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    background: linear-gradient(135deg, #f0e6ff 0%, #e8f0fe 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+  }
+  .container {
+    max-width: 900px;
+    width: 100%;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    overflow: hidden;
+    padding: 0 24px 24px 24px;
+  }
+  header {
+    text-align: center;
+    padding: 20px 0 14px 0;
+    border-bottom: 2px solid #f0e8f5;
+    margin-bottom: 18px;
+  }
+  header h1 {
+    font-size: 26px;
+    color: #3a1a5c;
+    letter-spacing: 4px;
+    font-weight: 700;
+  }
+  header p { font-size: 13px; color: #8a7aa8; margin-top: 4px; }
+
+  /* Mode selector */
+  .mode-selector {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .mode-btn {
+    padding: 10px 28px;
+    border: 2px solid #d5cde9;
+    border-radius: 10px;
+    background: #f8f5fc;
+    color: #5a3a7a;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn:hover { background: #f0e8fe; border-color: #b0a0d0; }
+  .mode-btn.active {
+    background: #7c3aed;
+    color: #fff;
+    border-color: #7c3aed;
+    box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+  }
+
+  /* Main row */
+  .main-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* Animation area */
+  .anim-area {
+    width: 200px;
+    min-width: 160px;
+    flex-shrink: 0;
+    background: #fafbfc;
+    border-radius: 14px;
+    border: 1px solid #e0e8f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    position: relative;
+  }
+  .anim-area canvas {
+    width: 160px;
+    height: 160px;
+    display: block;
+  }
+  .anim-label {
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #3a1a5c;
+    min-height: 30px;
+    text-align: center;
+  }
+  .anim-label.result-shown {
+    font-size: 22px;
+    animation: popIn 0.3s ease-out;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Stats panel */
+  .stats-panel {
+    flex: 1;
+    min-width: 0;
+    background: #f8f9fc;
+    border-radius: 14px;
+    border: 1px solid #e0e8f0;
+    padding: 14px 18px;
+  }
+  .stats-panel h3 {
+    font-size: 14px;
+    color: #3a1a5c;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e5f0;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .stats-total {
+    text-align: center;
+    font-size: 14px;
+    color: #5a5a7a;
+    margin-bottom: 8px;
+    padding: 4px 0;
+    background: #eef2f8;
+    border-radius: 6px;
+  }
+  .stats-total .num {
+    font-weight: 700;
+    color: #3a1a5c;
+    font-size: 18px;
+  }
+  .stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .stats-table th {
+    color: #5a7a9a;
+    font-weight: 600;
+    padding: 4px 6px;
+    text-align: center;
+    border-bottom: 1px solid #dce5f0;
+    font-size: 12px;
+  }
+  .stats-table td {
+    padding: 5px 6px;
+    text-align: center;
+    border-bottom: 1px solid #e8eff8;
+    font-size: 13px;
+  }
+  .stats-table td:first-child { font-weight: 600; color: #3a1a5c; }
+  .stats-table td .count { color: #2c3e50; }
+  .stats-table td .pct {
+    color: #7c3aed;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+  }
+  .stats-table tr:last-child td { border-bottom: none; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: #7c3aed;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #6d28d9; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: #e8eff8;
+    color: #3d5a7a;
+  }
+  .btn-secondary:hover { background: #d5e0ef; }
+  .btn-secondary:active { transform: translateY(0); }
+  .btn-batch10 {
+    background: #f59e0b;
+    color: #fff;
+  }
+  .btn-batch10:hover { background: #d97706; transform: translateY(-1px); }
+  .btn-batch100 {
+    background: #ef4444;
+    color: #fff;
+  }
+  .btn-batch100:hover { background: #dc2626; transform: translateY(-1px); }
+  .btn-reset {
+    background: #64748b;
+    color: #fff;
+  }
+  .btn-reset:hover { background: #475569; }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* Chart area */
+  .chart-wrap {
+    background: #fafbfc;
+    border-radius: 14px;
+    border: 1px solid #e0e8f0;
+    overflow: hidden;
+    padding: 8px;
+  }
+  .chart-wrap canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 700 / 280;
+  }
+
+  /* Theory banner */
+  .theory-banner {
+    text-align: center;
+    font-size: 13px;
+    color: #7a8aaa;
+    padding: 8px 0 4px 0;
+  }
+  .theory-banner strong { color: #e74c3c; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .main-row { flex-direction: column; align-items: center; }
+    .anim-area { width: 100%; max-width: 240px; }
+    .stats-panel { width: 100%; }
+    .btn { padding: 8px 16px; font-size: 13px; }
+  }
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    .container { padding: 0 12px 12px 12px; }
+    header h1 { font-size: 20px; }
+    .mode-btn { padding: 8px 16px; font-size: 13px; }
+    .controls { gap: 6px; }
+    .btn { padding: 7px 12px; font-size: 12px; }
+    .anim-area canvas { width: 130px; height: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>概率统计模拟器</h1>
+    <p>Probability &amp; Statistics Simulator</p>
+  </header>
+
+  <div class="mode-selector">
+    <button class="mode-btn active" data-mode="coin">抛硬币</button>
+    <button class="mode-btn" data-mode="dice">掷骰子</button>
+  </div>
+
+  <div class="main-row">
+    <!-- Animation area -->
+    <div class="anim-area">
+      <canvas id="animCanvas" width="320" height="320"></canvas>
+      <div class="anim-label" id="animLabel">&nbsp;</div>
+    </div>
+
+    <!-- Stats panel -->
+    <div class="stats-panel">
+      <h3 id="statsTitle">频率统计</h3>
+      <div class="stats-total">
+        总试验次数：<span class="num" id="totalTrials">0</span>
+      </div>
+      <table class="stats-table" id="statsTable">
+        <thead><tr><th>结果</th><th>频数</th><th>频率</th></tr></thead>
+        <tbody id="statsBody"></tbody>
+      </table>
+      <div class="theory-banner" id="theoryBanner">
+        大数定律：试验次数越多，频率越接近
+        <strong id="theoryProb">理论概率 (50.0%)</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls" id="controls">
+    <button class="btn btn-primary" id="btnOnce">抛一次</button>
+    <button class="btn btn-batch10" id="btn10">抛10次</button>
+    <button class="btn btn-batch100" id="btn100">抛100次</button>
+    <button class="btn btn-reset" id="btnReset">重置</button>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-wrap">
+    <canvas id="chartCanvas" width="700" height="280"></canvas>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ---- Canvas setup ----
+  const animCanvas = document.getElementById('animCanvas');
+  const actx = animCanvas.getContext('2d');
+  const chartCanvas = document.getElementById('chartCanvas');
+  const cctx = chartCanvas.getContext('2d');
+  const AW = animCanvas.width, AH = animCanvas.height; // 320x320
+  const CW = chartCanvas.width, CH = chartCanvas.height; // 700x280
+  const centerX = AW / 2, centerY = AH / 2 - 10;
+
+  // ---- DOM refs ----
+  const animLabel = document.getElementById('animLabel');
+  const statsBody = document.getElementById('statsBody');
+  const totalTrials = document.getElementById('totalTrials');
+  const theoryProb = document.getElementById('theoryProb');
+  const btnOnce = document.getElementById('btnOnce');
+  const btn10 = document.getElementById('btn10');
+  const btn100 = document.getElementById('btn100');
+  const btnReset = document.getElementById('btnReset');
+
+  // ---- State ----
+  let mode = 'coin';
+  let stats = { coin: { heads: 0, tails: 0 }, dice: [0,0,0,0,0,0], total: 0 };
+  let isAnimating = false;
+  let animStartTime = 0;
+  const ANIM_DURATION = 650; // ms
+  let animResult = null; // '正面'/'反面' for coin, 1-6 for dice
+  let pendingCallbacks = []; // queued updates after animation
+
+  // Coin spin state
+  let coinFace = '正面';
+
+  // Dice animation state
+  let diceDisplayNum = 1;
+  let lastDiceChange = 0;
+
+  // ---- Core functions ----
+  function flipCoin() {
+    return Math.random() < 0.5 ? '正面' : '反面';
+  }
+
+  function rollDice() {
+    return Math.floor(Math.random() * 6) + 1;
+  }
+
+  function updateStats(result) {
+    stats.total++;
+    if (mode === 'coin') {
+      if (result === '正面') stats.coin.heads++;
+      else stats.coin.tails++;
+    } else {
+      stats.dice[result - 1]++;
+    }
+  }
+
+  function batchUpdate(results) {
+    for (const r of results) {
+      stats.total++;
+      if (mode === 'coin') {
+        if (r === '正面') stats.coin.heads++;
+        else stats.coin.tails++;
+      } else {
+        stats.dice[r - 1]++;
+      }
+    }
+  }
+
+  function getFreqData() {
+    if (mode === 'coin') {
+      const h = stats.coin.heads, t = stats.coin.tails;
+      const total = stats.total || 1;
+      return [
+        { label: '正面', count: h, pct: (h / total) * 100 },
+        { label: '反面', count: t, pct: (t / total) * 100 }
+      ];
+    } else {
+      return stats.dice.map((c, i) => ({
+        label: (i + 1).toString(),
+        count: c,
+        pct: (c / (stats.total || 1)) * 100
+      }));
+    }
+  }
+
+  // ---- Stats display ----
+  function renderStats() {
+    const data = getFreqData();
+    totalTrials.textContent = stats.total;
+
+    const th = mode === 'coin' ? '50.0%' : '16.7%';
+    theoryProb.textContent = '理论概率 (' + th + ')';
+
+    let html = '';
+    for (const d of data) {
+      html += '<tr><td>' + d.label + '</td>'
+        + '<td class="count">' + d.count + '</td>'
+        + '<td><span class="pct">' + d.pct.toFixed(1) + '%</span></td></tr>';
+    }
+    statsBody.innerHTML = html;
+  }
+
+  // ---- Chart drawing ----
+  function drawChart() {
+    const ctx = cctx;
+    const W = CW, H = CH;
+    ctx.clearRect(0, 0, W, H);
+
+    const pad = { top: 20, bottom: 32, left: 48, right: 16 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top - pad.bottom;
+
+    // Background
+    ctx.fillStyle = '#f8f9fc';
+    ctx.fillRect(pad.left, pad.top, chartW, chartH);
+
+    // Y-axis gridlines
+    ctx.strokeStyle = '#e0e5ec';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    for (let pct = 0; pct <= 100; pct += 20) {
+      const y = pad.top + chartH - (pct / 100) * chartH;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#7a8aaa';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(pct + '%', pad.left - 6, y);
+      ctx.setLineDash([3, 4]);
+    }
+    ctx.setLineDash([]);
+
+    // Theoretical probability line
+    const theoryPct = mode === 'coin' ? 50 : 100 / 6;
+    const theoryY = pad.top + chartH - (theoryPct / 100) * chartH;
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left + 2, theoryY);
+    ctx.lineTo(W - pad.right, theoryY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#e74c3c';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('理论值 ' + theoryPct.toFixed(1) + '%', pad.left + 6, theoryY - 4);
+
+    // Bars
+    const data = getFreqData();
+    if (stats.total === 0) {
+      // Draw empty state
+      ctx.fillStyle = '#c0c8d8';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('点击按钮开始试验', pad.left + chartW / 2, pad.top + chartH / 2);
+      return;
+    }
+
+    const barCount = data.length;
+    const gap = chartW / barCount;
+    const barWidth = Math.min(gap * 0.6, 50);
+
+    // Colors
+    const coinColors = [
+      ['#f5c842', '#e6a817'],
+      ['#5b9cf5', '#2e7ff0']
+    ];
+    const diceColors = [
+      ['#e74c3c','#c0392b'], ['#e67e22','#d35400'], ['#f1c40f','#f39c12'],
+      ['#2ecc71','#27ae60'], ['#3498db','#2980b9'], ['#9b59b6','#8e44ad']
+    ];
+
+    data.forEach((d, i) => {
+      const barH = (d.pct / 100) * chartH;
+      const x = pad.left + gap * i + (gap - barWidth) / 2;
+      const y = pad.top + chartH - Math.max(barH, 0);
+
+      const colors = mode === 'coin' ? coinColors[i] : diceColors[i];
+      const grad = ctx.createLinearGradient(x, y, x, pad.top + chartH);
+      grad.addColorStop(0, colors[0]);
+      grad.addColorStop(1, colors[1]);
+
+      ctx.fillStyle = grad;
+      ctx.shadowColor = 'rgba(0,0,0,0.08)';
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetY = 2;
+      ctx.fillRect(x, y, barWidth, Math.max(barH, 0));
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+
+      // Value on top
+      ctx.fillStyle = '#2c3e50';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(d.count, x + barWidth / 2, y - 4);
+
+      // Percentage
+      ctx.fillStyle = '#5a7a9a';
+      ctx.font = '11px sans-serif';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(d.pct.toFixed(1) + '%', x + barWidth / 2, y - 18);
+
+      // Label below
+      ctx.fillStyle = '#3d5a7a';
+      ctx.font = '13px sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText(d.label, x + barWidth / 2, pad.top + chartH + 4);
+    });
+
+    // Axis label
+    ctx.fillStyle = '#8a9aae';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(mode === 'coin' ? '结果' : '点数', pad.left + chartW / 2, pad.top + chartH + 16);
+
+    // Y-axis title
+    ctx.save();
+    ctx.translate(12, pad.top + chartH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#8a9aae';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('频率 (%)', 0, 0);
+    ctx.restore();
+  }
+
+  // ---- Coin drawing ----
+  function drawCoin(progress) {
+    const ctx = actx;
+    ctx.clearRect(0, 0, AW, AH);
+
+    // Subtle background
+    ctx.fillStyle = '#f5f7fb';
+    ctx.beginPath();
+    ctx.rect(10, 10, AW - 20, AH - 20);
+    ctx.fill();
+
+    const cx = centerX, cy = centerY;
+    const maxR = 75;
+
+    if (progress == null || progress >= 1) {
+      // Static display
+      drawCoinFace(ctx, cx, cy, maxR, coinFace);
+      return;
+    }
+
+    // Spinning animation
+    const totalHalfturns = 14; // 7 full rotations
+    const angle = progress * totalHalfturns * Math.PI;
+    const scaleX = Math.abs(Math.cos(angle));
+    const currentHalf = Math.floor(angle / Math.PI) % 2;
+
+    // Which face to show: alternate, end on result
+    const showFace = (currentHalf === 0) ? animResult : (animResult === '正面' ? '反面' : '正面');
+
+    const r = maxR;
+    const rx = Math.max(r * scaleX, 2);
+    const ry = r;
+
+    // Shadow
+    ctx.beginPath();
+    ctx.ellipse(cx + 3, cy + 4, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fill();
+
+    // Coin body
+    const grad = ctx.createRadialGradient(cx - rx * 0.2, cy - ry * 0.2, 1, cx, cy, rx);
+    grad.addColorStop(0, '#ffe066');
+    grad.addColorStop(0.5, '#f5c842');
+    grad.addColorStop(1, '#c99f1a');
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = '#a07d10';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Inner rim
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx * 0.82, ry * 0.82, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(160,125,16,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Text on coin
+    if (scaleX > 0.25) {
+      const fontSize = Math.min(36, rx * 0.55);
+      ctx.fillStyle = '#7a5a08';
+      ctx.font = 'bold ' + fontSize + 'px "Microsoft YaHei", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(showFace === '正面' ? '正' : '反', cx, cy);
+    }
+  }
+
+  function drawCoinFace(ctx, cx, cy, r, face) {
+    // Shadow
+    ctx.beginPath();
+    ctx.arc(cx + 3, cy + 3, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.fill();
+
+    // Outer rim
+    const grad = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.2, 1, cx, cy, r);
+    grad.addColorStop(0, '#ffe680');
+    grad.addColorStop(0.4, '#f5c842');
+    grad.addColorStop(1, '#b88a10');
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = '#a07d10';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Inner ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.82, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(160,125,16,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Center text
+    ctx.fillStyle = '#7a5a08';
+    ctx.font = 'bold 48px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(face === '正面' ? '正' : '反', cx, cy + 2);
+
+    // Decorative pattern around edge
+    for (let i = 0; i < 24; i++) {
+      const a = (i / 24) * Math.PI * 2;
+      const dx = Math.cos(a) * r * 0.9;
+      const dy = Math.sin(a) * r * 0.9;
+      ctx.beginPath();
+      ctx.arc(cx + dx, cy + dy, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(160,125,16,0.2)';
+      ctx.fill();
+    }
+  }
+
+  // ---- Dice drawing ----
+  function drawDiceFace(ctx, cx, cy, size, num, progress) {
+    const s = size;
+    const corner = s * 0.18;
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.beginPath();
+    roundRect(ctx, cx + 3, cy + 3, s, s, corner);
+    ctx.fill();
+
+    // Body
+    const grad = ctx.createLinearGradient(cx - s/2, cy - s/2, cx + s/2, cy + s/2);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(1, '#e8ecf0');
+    ctx.beginPath();
+    roundRect(ctx, cx - s/2, cy - s/2, s, s, corner);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = '#c0c8d0';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots
+    const dotR = s * 0.08;
+    const dotColor = '#2c3e50';
+    const positions = getDotPositions(num, s);
+
+    for (const pos of positions) {
+      const dx = pos[0], dy = pos[1];
+      const dotGrad = ctx.createRadialGradient(dx - dotR*0.3, dy - dotR*0.3, 1, dx, dy, dotR);
+      dotGrad.addColorStop(0, '#4a5a6a');
+      dotGrad.addColorStop(1, '#1a2a3a');
+      ctx.beginPath();
+      ctx.arc(dx, dy, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = dotGrad;
+      ctx.fill();
+      // Dot highlight
+      ctx.beginPath();
+      ctx.arc(dx - dotR*0.25, dy - dotR*0.25, dotR*0.3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fill();
+    }
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  function getDotPositions(num, s) {
+    const c = { x: centerX, y: centerY };
+    const off = s * 0.28;
+    const d = s * 0.22;
+    // Dot positions relative to center
+    const D = (dx, dy) => [c.x + dx, c.y + dy];
+
+    switch (num) {
+      case 1: return [D(0, 0)];
+      case 2: return [D(-off, -off), D(off, off)];
+      case 3: return [D(-off, -off), D(0, 0), D(off, off)];
+      case 4: return [D(-off, -off), D(off, -off), D(-off, off), D(off, off)];
+      case 5: return [D(-off, -off), D(off, -off), D(0, 0), D(-off, off), D(off, off)];
+      case 6: return [D(-off, -off), D(off, -off), D(-off, 0), D(off, 0), D(-off, off), D(off, off)];
+      default: return [];
+    }
+  }
+
+  function drawDice(progress) {
+    const ctx = actx;
+    ctx.clearRect(0, 0, AW, AH);
+
+    ctx.fillStyle = '#f5f7fb';
+    ctx.beginPath();
+    ctx.rect(10, 10, AW - 20, AH - 20);
+    ctx.fill();
+
+    const size = 130;
+
+    if (progress == null || progress >= 1) {
+      drawDiceFace(ctx, centerX, centerY, size, diceDisplayNum);
+      return;
+    }
+
+    // Rolling animation: cycle numbers, slight shake
+    const totalChanges = 16;
+    const changeIdx = Math.floor(progress * totalChanges);
+    const cycleNums = [];
+    // Generate cycling sequence ending with result
+    for (let i = 0; i < totalChanges; i++) {
+      let n;
+      do {
+        n = Math.floor(Math.random() * 6) + 1;
+      } while (n === (cycleNums[i - 1] || 0));
+      cycleNums.push(n);
+    }
+    cycleNums[cycleNums.length - 1] = animResult;
+
+    const displayNum = cycleNums[Math.min(changeIdx, cycleNums.length - 1)];
+
+    // Shake offset
+    const shakeAmt = (1 - progress) * 4;
+    const shakeX = (Math.random() - 0.5) * shakeAmt;
+    const shakeY = (Math.random() - 0.5) * shakeAmt;
+
+    // Rotation wobble
+    const wobbleAngle = (1 - progress) * 0.08;
+
+    ctx.save();
+    ctx.translate(shakeX, shakeY);
+    ctx.rotate(wobbleAngle);
+
+    drawDiceFace(ctx, centerX, centerY, size, displayNum);
+
+    ctx.restore();
+  }
+
+  // ---- Animation ----
+  function startAnimation(result, callback) {
+    isAnimating = true;
+    animStartTime = performance.now();
+    animResult = result;
+    animLabel.textContent = '';
+    animLabel.className = 'anim-label';
+    disableButtons(true);
+
+    if (callback) {
+      pendingCallbacks.push(callback);
+    }
+  }
+
+  function disableButtons(disabled) {
+    btnOnce.disabled = disabled;
+    btn10.disabled = disabled;
+    btn100.disabled = disabled;
+  }
+
+  function tickAnim(ts) {
+    if (isAnimating) {
+      const elapsed = ts - animStartTime;
+      const progress = Math.min(elapsed / ANIM_DURATION, 1);
+
+      if (mode === 'coin') {
+        drawCoin(progress);
+      } else {
+        drawDice(progress);
+      }
+
+      if (progress >= 1) {
+        isAnimating = false;
+        // Show result
+        if (mode === 'coin') {
+          coinFace = animResult;
+          drawCoin(1);
+          animLabel.textContent = animResult;
+          animLabel.className = 'anim-label result-shown';
+        } else {
+          diceDisplayNum = animResult;
+          drawDice(1);
+          animLabel.textContent = '点数 ' + animResult;
+          animLabel.className = 'anim-label result-shown';
+        }
+
+        // Run pending callbacks
+        const cbs = pendingCallbacks.slice();
+        pendingCallbacks = [];
+        for (const cb of cbs) cb();
+
+        renderStats();
+        drawChart();
+        disableButtons(false);
+      }
+    } else {
+      // Static display
+      if (mode === 'coin') {
+        drawCoin(1);
+      } else {
+        drawDice(1);
+      }
+    }
+
+    requestAnimationFrame(tickAnim);
+  }
+
+  // ---- Actions ----
+  function doSingle() {
+    if (isAnimating) return;
+    const result = mode === 'coin' ? flipCoin() : rollDice();
+    startAnimation(result, function() {
+      updateStats(result);
+    });
+  }
+
+  function doBatch(n) {
+    if (isAnimating) return;
+    const results = [];
+    for (let i = 0; i < n; i++) {
+      results.push(mode === 'coin' ? flipCoin() : rollDice());
+    }
+    const lastResult = results[results.length - 1];
+    startAnimation(lastResult, function() {
+      batchUpdate(results);
+    });
+  }
+
+  function doReset() {
+    if (isAnimating) return;
+    stats = { coin: { heads: 0, tails: 0 }, dice: [0,0,0,0,0,0], total: 0 };
+    coinFace = '正面';
+    diceDisplayNum = 1;
+    animLabel.textContent = ' ';
+    animLabel.className = 'anim-label';
+    renderStats();
+    drawChart();
+    if (mode === 'coin') {
+      drawCoin(1);
+    } else {
+      drawDice(1);
+    }
+  }
+
+  // ---- Mode switch ----
+  function switchMode(newMode) {
+    if (isAnimating) return;
+    mode = newMode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.mode-btn[data-mode="' + newMode + '"]').classList.add('active');
+
+    // Update button labels
+    if (mode === 'coin') {
+      btnOnce.textContent = '抛一次';
+      btn10.textContent = '抛10次';
+      btn100.textContent = '抛100次';
+    } else {
+      btnOnce.textContent = '掷一次';
+      btn10.textContent = '掷10次';
+      btn100.textContent = '掷100次';
+    }
+
+    doReset();
+  }
+
+  // ---- Event listeners ----
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      switchMode(this.dataset.mode);
+    });
+  });
+
+  btnOnce.addEventListener('click', doSingle);
+  btn10.addEventListener('click', function() { doBatch(10); });
+  btn100.addEventListener('click', function() { doBatch(100); });
+  btnReset.addEventListener('click', doReset);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    if (e.key === ' ' || e.key === 'Space') {
+      e.preventDefault();
+      doSingle();
+    }
+    if (e.key === 'r' || e.key === 'R') {
+      doReset();
+    }
+  });
+
+  // ---- Init ----
+  function init() {
+    coinFace = '正面';
+    diceDisplayNum = 1;
+    renderStats();
+    drawCoin(1);
+    drawChart();
+    requestAnimationFrame(tickAnim);
+  }
+
+  init();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<section class="section page-header">
+    <div class="container">
+        <h1>课件库</h1>
+        <p>浏览并下载高质量的交互式教学课件</p>
+    </div>
+</section>
+
+<section class="section library-tools">
+    <div class="container">
+        <div class="library-filters">
+            <a href="/library?subject=all" class="filter-btn <%= subject === 'all' ? 'active' : '' %>">全部</a>
+            <a href="/library?subject=数学" class="filter-btn <%= subject === '数学' ? 'active' : '' %>">数学</a>
+            <a href="/library?subject=物理" class="filter-btn <%= subject === '物理' ? 'active' : '' %>">物理</a>
+        </div>
+        <form class="search-box" method="GET" action="/library">
+            <% if (subject !== 'all') { %>
+            <input type="hidden" name="subject" value="<%= subject %>">
+            <% } %>
+            <input type="text" name="search" placeholder="搜索课件..." value="<%= search %>" class="search-input">
+            <button type="submit" class="search-btn">搜索</button>
+        </form>
+    </div>
+</section>
+
+<section class="section courseware-list">
+    <div class="container">
+        <% if (library.length === 0) { %>
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>暂无课件</h3>
+            <p>没有找到匹配的课件，试试其他关键词</p>
+            <a href="/library" class="btn btn-secondary">清除筛选</a>
+        </div>
+        <% } else { %>
+        <div class="courseware-grid">
+            <% library.forEach(function(cw) { %>
+            <a href="/view/<%= cw.id %>" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject <%= cw.subject %>"><%= cw.subject %></span>
+                    <span class="courseware-grade"><%= cw.grade %></span>
+                </div>
+                <h3 class="courseware-title"><%= cw.title %></h3>
+                <p class="courseware-desc"><%= cw.description %></p>
+                <div class="courseware-tags">
+                    <% cw.tags.forEach(function(tag) { %>
+                    <span class="tag"><%= tag %></span>
+                    <% }) %>
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            <% }) %>
+        </div>
+        <% } %>
+    </div>
+</section>
