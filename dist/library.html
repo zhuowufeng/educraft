@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCraft 智课工坊</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">EduCraft</span>
+                <span class="logo-sub">智课工坊</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link ">首页</a>
+                <a href="/library" class="nav-link active">课件库</a>
+                <a href="/generate" class="nav-link ">AI 生成</a>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="section page-header">
+    <div class="container">
+        <h1>课件库</h1>
+        <p>浏览并下载高质量的交互式教学课件</p>
+    </div>
+</section>
+
+<section class="section library-tools">
+    <div class="container">
+        <div class="library-filters">
+            <a href="/library?subject=all" class="filter-btn active">全部</a>
+            <a href="/library?subject=数学" class="filter-btn ">数学</a>
+            <a href="/library?subject=物理" class="filter-btn ">物理</a>
+        </div>
+        <form class="search-box" method="GET" action="/library">
+            
+            <input type="text" name="search" placeholder="搜索课件..." value="" class="search-input">
+            <button type="submit" class="search-btn">搜索</button>
+        </form>
+    </div>
+</section>
+
+<section class="section courseware-list">
+    <div class="container">
+        
+        <div class="courseware-grid">
+            
+            <a href="/view/quadratic-function" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">二次函数图像探索</h3>
+                <p class="courseware-desc">交互式二次函数图像演示，支持实时调整a、b、c参数，动态观察抛物线变化，显示顶点、对称轴、交点等关键特征。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">二次函数</span>
+                    
+                    <span class="tag">抛物线</span>
+                    
+                    <span class="tag">函数图像</span>
+                    
+                    <span class="tag">代数</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/trig-unit-circle" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">高中</span>
+                </div>
+                <h3 class="courseware-title">三角函数单位圆</h3>
+                <p class="courseware-desc">通过单位圆动态演示正弦、余弦、正切函数的定义和变化规律，角度可拖拽调整，实时显示函数值。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">三角函数</span>
+                    
+                    <span class="tag">单位圆</span>
+                    
+                    <span class="tag">正弦</span>
+                    
+                    <span class="tag">余弦</span>
+                    
+                    <span class="tag">几何</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/pythagorean" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">勾股定理可视化证明</h3>
+                <p class="courseware-desc">直观展示勾股定理的几何意义，通过面积法验证 a² + b² = c²，支持交互式操作。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">勾股定理</span>
+                    
+                    <span class="tag">几何</span>
+                    
+                    <span class="tag">面积</span>
+                    
+                    <span class="tag">证明</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/lens-imaging" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 物理">物理</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">凸透镜成像规律</h3>
+                <p class="courseware-desc">模拟凸透镜成像实验，物距可拖拽调整，实时显示成像位置、大小、倒正和虚实变化，完美覆盖u&gt;2f、u=2f、f&lt;u&lt;2f等所有成像规律。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">凸透镜</span>
+                    
+                    <span class="tag">成像</span>
+                    
+                    <span class="tag">光学</span>
+                    
+                    <span class="tag">物理实验</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/free-fall" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 物理">物理</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">自由落体与抛体运动</h3>
+                <p class="courseware-desc">模拟自由落体、竖直上抛和平抛运动，实时显示位移、速度、加速度，支持调整初始参数。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">自由落体</span>
+                    
+                    <span class="tag">抛体运动</span>
+                    
+                    <span class="tag">力学</span>
+                    
+                    <span class="tag">运动学</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/probability" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">概率统计模拟器</h3>
+                <p class="courseware-desc">通过抛硬币、掷骰子等实验直观理解概率与统计，支持大量重复实验，实时显示频率分布和统计图表。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">概率</span>
+                    
+                    <span class="tag">统计</span>
+                    
+                    <span class="tag">实验</span>
+                    
+                    <span class="tag">数据分析</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+        </div>
+        
+    </div>
+</section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>EduCraft 智课工坊</h4>
+                    <p>用 AI 赋能教育，让每一位教师都能轻松制作高质量的交互课件。</p>
+                </div>
+                <div>
+                    <h4>学科覆盖</h4>
+                    <ul>
+                        <li><a href="/library?subject=数学">初中数学</a></li>
+                        <li><a href="/library?subject=物理">初中物理</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>特色</h4>
+                    <ul>
+                        <li>AI 智能生成</li>
+                        <li>交互式学习</li>
+                        <li>即点即用</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EduCraft 智课工坊. 让备课更轻松，让课堂更精彩。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+
+<script>
+(function() {
+    var cards = document.querySelectorAll('.courseware-card');
+    var container = document.querySelector('.courseware-grid');
+    var emptyState = document.querySelector('.empty-state');
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    var searchInput = document.querySelector('.search-input');
+    var searchForm = document.querySelector('.search-box');
+    var clearBtn = emptyState && emptyState.querySelector('.btn');
+
+    var allData = [{"id":"quadratic-function","subject":"数学","title":"二次函数图像探索","description":"交互式二次函数图像演示，支持实时调整a、b、c参数，动态观察抛物线变化，显示顶点、对称轴、交点等关键特征。","tags":["二次函数","抛物线","函数图像","代数"]},{"id":"trig-unit-circle","subject":"数学","title":"三角函数单位圆","description":"通过单位圆动态演示正弦、余弦、正切函数的定义和变化规律，角度可拖拽调整，实时显示函数值。","tags":["三角函数","单位圆","正弦","余弦","几何"]},{"id":"pythagorean","subject":"数学","title":"勾股定理可视化证明","description":"直观展示勾股定理的几何意义，通过面积法验证 a² + b² = c²，支持交互式操作。","tags":["勾股定理","几何","面积","证明"]},{"id":"lens-imaging","subject":"物理","title":"凸透镜成像规律","description":"模拟凸透镜成像实验，物距可拖拽调整，实时显示成像位置、大小、倒正和虚实变化，完美覆盖u>2f、u=2f、f<u<2f等所有成像规律。","tags":["凸透镜","成像","光学","物理实验"]},{"id":"free-fall","subject":"物理","title":"自由落体与抛体运动","description":"模拟自由落体、竖直上抛和平抛运动，实时显示位移、速度、加速度，支持调整初始参数。","tags":["自由落体","抛体运动","力学","运动学"]},{"id":"probability","subject":"数学","title":"概率统计模拟器","description":"通过抛硬币、掷骰子等实验直观理解概率与统计，支持大量重复实验，实时显示频率分布和统计图表。","tags":["概率","统计","实验","数据分析"]}];
+
+    function render() {
+        var subj = new URLSearchParams(location.search).get('subject') || 'all';
+        var q = new URLSearchParams(location.search).get('search') || '';
+        var filtered = allData;
+        if (subj !== 'all') filtered = filtered.filter(function(c) { return c.subject === subj; });
+        if (q) filtered = filtered.filter(function(c) { return c.title.indexOf(q) !== -1 || c.description.indexOf(q) !== -1 || c.tags.some(function(t) { return t.indexOf(q) !== -1; }); });
+
+        filterBtns.forEach(function(b) {
+            var s = new URLSearchParams(b.getAttribute('href').split('?')[1]).get('subject') || 'all';
+            b.classList.toggle('active', s === subj);
+        });
+
+        if (searchInput) searchInput.value = q;
+
+        var ids = {};
+        filtered.forEach(function(c) { ids[c.id] = true; });
+        cards.forEach(function(c) {
+            var id = c.getAttribute('href').split('/').pop();
+            c.style.display = ids[id] ? '' : 'none';
+        });
+
+        if (emptyState) {
+            container.style.display = filtered.length ? '' : 'none';
+            emptyState.style.display = filtered.length ? 'none' : '';
+        }
+    }
+
+    filterBtns.forEach(function(b) {
+        b.addEventListener('click', function(e) {
+            e.preventDefault();
+            var u = new URL(b.href);
+            var params = new URLSearchParams(u.search);
+            var newUrl = location.pathname;
+            if (params.get('subject') && params.get('subject') !== 'all') newUrl += '?subject=' + params.get('subject');
+            history.pushState({}, '', newUrl);
+            render();
+        });
+    });
+
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var v = searchInput.value.trim();
+            var params = new URLSearchParams(location.search);
+            if (v) params.set('search', v); else params.delete('search');
+            var qs = params.toString();
+            history.pushState({}, '', location.pathname + (qs ? '?' + qs : ''));
+            render();
+        });
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            history.pushState({}, '', location.pathname);
+            render();
+        });
+    }
+
+    window.addEventListener('popstate', render);
+    render();
+})();
+</script>
+</body>
+</html>

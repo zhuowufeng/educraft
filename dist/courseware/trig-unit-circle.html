@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三角函数单位圆 - 交互式教学</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #f0f2f5;
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+  color: #333;
+  padding: 20px;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 28px 30px 25px;
+}
+h1 {
+  font-size: 26px;
+  color: #1a237e;
+  text-align: center;
+  margin-bottom: 18px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.main-area {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.canvas-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+canvas#unitCircle {
+  display: block;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fff;
+  width: 500px;
+  height: 500px;
+  cursor: pointer;
+  touch-action: none;
+}
+.info-panel {
+  flex: 1;
+  min-width: 200px;
+  max-width: 280px;
+  background: #f8f9fc;
+  border-radius: 10px;
+  padding: 18px 20px;
+  border: 1px solid #e8eaf0;
+}
+.info-panel .section {
+  margin-bottom: 16px;
+}
+.info-panel .section:last-child { margin-bottom: 0; }
+.info-panel .section-title {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 6px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.angle-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.angle-row .label { font-size: 15px; color: #555; }
+.angle-row .big { font-size: 22px; font-weight: 700; color: #1a237e; }
+.angle-row .sub { font-size: 14px; color: #888; }
+.quadrant-tag {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 1px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+.trig-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+.trig-row:last-of-type { border-bottom: none; }
+.trig-row .trig-label { font-size: 15px; color: #555; min-width: 55px; }
+.trig-row .trig-val {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+  min-width: 65px;
+}
+.trig-row .color-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+.identity-box {
+  background: #e8f5e9;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 15px;
+  color: #2e7d32;
+  font-weight: 600;
+}
+.identity-box .big-id { font-size: 20px; }
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.toggle-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-group input[type="checkbox"] {
+  width: 16px; height: 16px;
+  cursor: pointer;
+  accent-color: #1a237e;
+}
+.controls {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  background: #f8f9fc;
+  border-radius: 10px;
+  border: 1px solid #e8eaf0;
+}
+.controls .slider-label {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+}
+.controls input[type="range"] {
+  flex: 1;
+  min-width: 80px;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ddd;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+.controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #1a237e;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.controls input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #1a237e;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.angle-display-box {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a237e;
+  min-width: 58px;
+  text-align: center;
+}
+.btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-play {
+  background: #1a237e;
+  color: #fff;
+}
+.btn-play:hover { background: #283593; }
+.btn-play.playing { background: #e53935; }
+.btn-play.playing:hover { background: #c62828; }
+.btn-preset {
+  background: #e8eaf0;
+  color: #555;
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 14px;
+}
+.btn-preset:hover { background: #d0d4de; }
+.btn-preset.active { background: #1a237e; color: #fff; }
+.speed-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.speed-wrap input { min-width: 60px; flex: none; }
+.presets {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.secondary-area {
+  margin-top: 14px;
+  display: none;
+}
+.secondary-area.visible { display: block; }
+canvas#curveCanvas {
+  display: block;
+  width: 100%;
+  max-width: 780px;
+  height: 120px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+  margin: 0 auto;
+}
+.curve-label {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-top: 4px;
+}
+@media (max-width: 780px) {
+  .container { padding: 16px; }
+  canvas#unitCircle { width: 100%; height: auto; aspect-ratio: 1; }
+  .info-panel { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>三角函数单位圆</h1>
+
+  <div class="main-area">
+    <div class="canvas-wrap">
+      <canvas id="unitCircle" width="500" height="500"></canvas>
+    </div>
+    <div class="info-panel">
+      <div class="section">
+        <div class="section-title">角度</div>
+        <div class="angle-row">
+          <span class="big" id="angleDeg">45.0&deg;</span>
+          <span class="sub" id="angleRad">&#960;/4 rad</span>
+          <span class="quadrant-tag" id="quadrantLabel">I</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">三角函数值</div>
+        <div class="trig-row">
+          <span class="color-dot" style="background:#e53935"></span>
+          <span class="trig-label">sin &theta;</span>
+          <span class="trig-val" style="color:#e53935" id="sinDisplay">0.707</span>
+        </div>
+        <div class="trig-row">
+          <span class="color-dot" style="background:#1e88e5"></span>
+          <span class="trig-label">cos &theta;</span>
+          <span class="trig-val" style="color:#1e88e5" id="cosDisplay">0.707</span>
+        </div>
+        <div class="trig-row">
+          <span class="color-dot" style="background:#43a047"></span>
+          <span class="trig-label">tan &theta;</span>
+          <span class="trig-val" style="color:#43a047" id="tanDisplay">1.000</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">恒等式</div>
+        <div class="identity-box">
+          sin&sup2;&theta; + cos&sup2;&theta; = <span class="big-id" id="identityDisplay">1.000</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">曲线显示</div>
+        <div class="toggle-group">
+          <label><input type="checkbox" id="chkSinCurve"> <span style="color:#e53935;font-weight:600;">&#9472;</span> 显示正弦曲线 y = sin &theta;</label>
+          <label><input type="checkbox" id="chkCosCurve"> <span style="color:#1e88e5;font-weight:600;">&#9472;</span> 显示余弦曲线 y = cos &theta;</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span class="slider-label">角度</span>
+    <input type="range" id="angleSlider" min="0" max="360" value="45" step="0.1">
+    <span class="angle-display-box" id="sliderAngleDisplay">45.0&deg;</span>
+    <button class="btn btn-play" id="playBtn">&#9654; 播放</button>
+    <div class="speed-wrap">
+      <span class="slider-label">速度</span>
+      <input type="range" id="speedSlider" min="1" max="10" value="5" step="1">
+      <span style="font-size:13px;color:#888;min-width:36px;" id="speedLabel">5</span>
+    </div>
+  </div>
+
+  <div class="controls" style="margin-top:8px;padding:8px 16px;">
+    <span class="slider-label">快捷角度</span>
+    <div class="presets">
+      <button class="btn btn-preset" data-angle="0">0&deg;</button>
+      <button class="btn btn-preset" data-angle="30">30&deg;</button>
+      <button class="btn btn-preset" data-angle="45">45&deg;</button>
+      <button class="btn btn-preset" data-angle="60">60&deg;</button>
+      <button class="btn btn-preset" data-angle="90">90&deg;</button>
+      <button class="btn btn-preset" data-angle="120">120&deg;</button>
+      <button class="btn btn-preset" data-angle="135">135&deg;</button>
+      <button class="btn btn-preset" data-angle="150">150&deg;</button>
+      <button class="btn btn-preset" data-angle="180">180&deg;</button>
+      <button class="btn btn-preset" data-angle="210">210&deg;</button>
+      <button class="btn btn-preset" data-angle="225">225&deg;</button>
+      <button class="btn btn-preset" data-angle="240">240&deg;</button>
+      <button class="btn btn-preset" data-angle="270">270&deg;</button>
+      <button class="btn btn-preset" data-angle="300">300&deg;</button>
+      <button class="btn btn-preset" data-angle="315">315&deg;</button>
+      <button class="btn btn-preset" data-angle="330">330&deg;</button>
+    </div>
+  </div>
+
+  <div class="secondary-area" id="secondaryArea">
+    <canvas id="curveCanvas" width="780" height="120"></canvas>
+    <div class="curve-label">&#952; 从 0&deg; 到 360&deg;，红色 = sin &#952;，蓝色 = cos &#952;</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const canvas = document.getElementById('unitCircle');
+  const ctx = canvas.getContext('2d');
+  const W = 500, H = 500;
+  const CX = W/2, CY = H/2;
+  const R = 200;
+
+  const PI = Math.PI, TAU = 2*PI;
+
+  let thetaDeg = 45;
+  let isPlaying = false;
+  let animId = null;
+  let isDragging = false;
+
+  // DOM refs
+  const angleDegEl = document.getElementById('angleDeg');
+  const angleRadEl = document.getElementById('angleRad');
+  const quadrantLabel = document.getElementById('quadrantLabel');
+  const sinDisplay = document.getElementById('sinDisplay');
+  const cosDisplay = document.getElementById('cosDisplay');
+  const tanDisplay = document.getElementById('tanDisplay');
+  const identityDisplay = document.getElementById('identityDisplay');
+  const angleSlider = document.getElementById('angleSlider');
+  const sliderAngleDisplay = document.getElementById('sliderAngleDisplay');
+  const playBtn = document.getElementById('playBtn');
+  const speedSlider = document.getElementById('speedSlider');
+  const speedLabel = document.getElementById('speedLabel');
+  const chkSinCurve = document.getElementById('chkSinCurve');
+  const chkCosCurve = document.getElementById('chkCosCurve');
+  const secondaryArea = document.getElementById('secondaryArea');
+  const curveCanvas = document.getElementById('curveCanvas');
+  const curveCtx = curveCanvas.getContext('2d');
+
+  // --- helpers ---
+  function toRad(d) { return d * PI / 180; }
+
+  function formatAngle(deg) {
+    const special = [
+      [0,'0'],[30,'&#960;/6'],[45,'&#960;/4'],[60,'&#960;/3'],[90,'&#960;/2'],
+      [120,'2&#960;/3'],[135,'3&#960;/4'],[150,'5&#960;/6'],[180,'&#960;'],
+      [210,'7&#960;/6'],[225,'5&#960;/4'],[240,'4&#960;/3'],[270,'3&#960;/2'],
+      [300,'5&#960;/3'],[315,'7&#960;/4'],[330,'11&#960;/6'],[360,'2&#960;']
+    ];
+    for (const [d,f] of special) {
+      if (Math.abs(deg - d) < 0.3) return f + ' rad';
+    }
+    const rad = toRad(deg);
+    return (rad/PI).toFixed(3) + '&#960; rad';
+  }
+
+  function getQuadrant(deg) {
+    if (deg < 0 || deg >= 360) deg = ((deg % 360) + 360) % 360;
+    if (deg < 90) return 'I';
+    if (deg < 180) return 'II';
+    if (deg < 270) return 'III';
+    return 'IV';
+  }
+
+  function snapToStep(v, step) { return Math.round(v/step)*step; }
+
+  // --- drawing ---
+  function drawGrid() {
+    ctx.save();
+    ctx.strokeStyle = '#f0f0f0';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+    }
+    for (let y = 0; y <= H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawAxes() {
+    ctx.save();
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = '#444';
+    ctx.font = '15px "Microsoft YaHei","PingFang SC",sans-serif';
+
+    // x-axis
+    ctx.beginPath(); ctx.moveTo(25,CY); ctx.lineTo(W-12,CY); ctx.stroke();
+    // arrow
+    ctx.beginPath();
+    ctx.moveTo(W-12,CY); ctx.lineTo(W-22,CY-6); ctx.lineTo(W-22,CY+6);
+    ctx.closePath(); ctx.fill();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('x', W-12, CY-8);
+
+    // y-axis
+    ctx.beginPath(); ctx.moveTo(CX,H-12); ctx.lineTo(CX,12); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(CX,12); ctx.lineTo(CX-6,22); ctx.lineTo(CX+6,22);
+    ctx.closePath(); ctx.fill();
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('y', CX+8, 10);
+
+    // O
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.fillText('O', CX-6, CY+4);
+
+    // tick marks
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.font = '13px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText('1', CX+R, CY+6);
+    ctx.fillText('-1', CX-R, CY+6);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('1', CX+6, CY-R);
+    ctx.fillText('-1', CX+6, CY+R);
+
+    // tick lines
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    for (let v of [-R, R]) {
+      ctx.beginPath(); ctx.moveTo(CX+v, CY-5); ctx.lineTo(CX+v, CY+5); ctx.stroke();
+    }
+    for (let v of [-R, R]) {
+      ctx.beginPath(); ctx.moveTo(CX-5, CY+v); ctx.lineTo(CX+5, CY+v); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawUnitCircle() {
+    ctx.save();
+    ctx.strokeStyle = '#1565c0';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(CX, CY, R, 0, TAU);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function getP(deg) {
+    const rad = toRad(deg);
+    return { x: CX + R*Math.cos(rad), y: CY - R*Math.sin(rad) };
+  }
+
+  function drawAngleArc() {
+    const rad = toRad(thetaDeg);
+    const arcR_inner = 30;
+    const arcR_outer = arcR_inner + 14;
+    ctx.save();
+    ctx.strokeStyle = '#ff8f00';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(CX, CY, arcR_inner, 0, -rad, true);
+    ctx.stroke();
+
+    // arrowhead at end
+    const aX = CX + arcR_inner * Math.cos(-rad);
+    const aY = CY + arcR_inner * Math.sin(-rad);
+    const angle = -rad + PI/2;
+    ctx.fillStyle = '#ff8f00';
+    ctx.beginPath();
+    ctx.moveTo(aX, aY);
+    ctx.lineTo(aX + 6*Math.cos(angle-0.5), aY + 6*Math.sin(angle-0.5));
+    ctx.lineTo(aX + 6*Math.cos(angle+0.5), aY + 6*Math.sin(angle+0.5));
+    ctx.closePath(); ctx.fill();
+
+    // θ label at mid-angle
+    const mid = rad/2;
+    const lr = arcR_outer;
+    ctx.fillStyle = '#e65100';
+    ctx.font = 'bold 18px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('θ', CX + lr*Math.cos(mid), CY - lr*Math.sin(mid));
+    ctx.restore();
+  }
+
+  function drawTriangleAndTrig() {
+    const rad = toRad(thetaDeg);
+    const cosR = R * Math.cos(rad);
+    const sinR = R * Math.sin(rad);
+    const pX = CX + cosR;
+    const pY = CY - sinR;
+    const fX = pX; // foot on x-axis
+    const fY = CY;
+
+    // right triangle fill
+    ctx.save();
+    ctx.fillStyle = 'rgba(33,150,243,0.10)';
+    ctx.strokeStyle = 'rgba(33,150,243,0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(fX, fY);
+    ctx.lineTo(pX, pY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // sin line (vertical, red)
+    ctx.save();
+    ctx.strokeStyle = '#e53935';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(pX, pY);
+    ctx.lineTo(pX, CY);
+    ctx.stroke();
+
+    // small right-angle marker at foot
+    const ms = 8;
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(fX, fY - ms);
+    ctx.lineTo(fX - ms, fY - ms);
+    ctx.lineTo(fX - ms, fY);
+    ctx.stroke();
+    ctx.restore();
+
+    // cos line (horizontal, blue)
+    ctx.save();
+    ctx.strokeStyle = '#1e88e5';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(pX, pY);
+    ctx.lineTo(CX, pY);
+    ctx.stroke();
+    ctx.restore();
+
+    // sin label
+    ctx.save();
+    ctx.font = 'bold 14px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.textAlign = 'center';
+    const sinMidY = (pY + CY)/2;
+    if (Math.abs(pX - CX) > 20) {
+      ctx.fillStyle = '#e53935';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('sinθ', pX + (cosR >= 0 ? 18 : -18), sinMidY);
+    }
+    ctx.restore();
+
+    // cos label
+    ctx.save();
+    ctx.font = 'bold 14px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillStyle = '#1e88e5';
+    ctx.textAlign = 'center';
+    if (Math.abs(sinR) > 15) {
+        ctx.textBaseline = sinR > 0 ? 'bottom' : 'top';
+        ctx.fillText('cosθ', (CX + pX)/2, pY + (sinR > 0 ? -6 : 18));
+    } else {
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('cosθ', (CX + pX)/2, CY + 20);
+    }
+    ctx.restore();
+  }
+
+  function drawTanLine() {
+    const rad = toRad(thetaDeg);
+    const cosV = Math.cos(rad);
+    const sinV = Math.sin(rad);
+
+    if (Math.abs(cosV) < 0.005) {
+      // near 90° or 270°, tan is infinite — draw asymptote indicator
+      ctx.save();
+      ctx.strokeStyle = '#43a047';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4,6]);
+      ctx.beginPath();
+      ctx.moveTo(CX+R, 10);
+      ctx.lineTo(CX+R, H-10);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = '13px "Microsoft YaHei","PingFang SC",sans-serif';
+      ctx.fillStyle = '#43a047';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      ctx.fillText('tanθ → ∞', CX+R+4, 14);
+      ctx.restore();
+      return;
+    }
+
+    const tanVal = sinV / cosV;
+    const tY = CY - R * tanVal;
+
+    // vertical tangent line at x=1 (dashed, light)
+    ctx.save();
+    ctx.strokeStyle = '#c8e6c9';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,4]);
+    ctx.beginPath();
+    ctx.moveTo(CX+R, CY - 2.5*R);
+    ctx.lineTo(CX+R, CY + 2.5*R);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // tan segment from (1,0) to (1, tanθ) clipped to ±2.5R
+    const minY = CY - 2.5*R;
+    const maxY = CY + 2.5*R;
+    let endY = Math.max(minY, Math.min(maxY, tY));
+
+    ctx.save();
+    ctx.strokeStyle = '#43a047';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(CX+R, CY);
+    ctx.lineTo(CX+R, endY);
+    ctx.stroke();
+
+    // small dot at end
+    ctx.fillStyle = '#43a047';
+    ctx.beginPath();
+    ctx.arc(CX+R, endY, 4, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    // dashed line from origin through P to tangent line
+    ctx.save();
+    ctx.strokeStyle = 'rgba(67,160,71,0.35)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5,5]);
+
+    const lineEndY = CY - 3*R * Math.tan(rad);
+    const lineEndY2 = CY + 3*R * Math.tan(rad);
+    // Draw from tangent intersection back through origin
+    ctx.beginPath();
+    ctx.moveTo(CX+R, (Math.abs(tY-CY) > R*2.5) ? endY : tY);
+    ctx.lineTo(CX, CY);
+    // continue in opposite direction
+    const oppX = CX - R * 1.8;
+    const oppY = CY + (CY - tY)/R * (oppX - CX); // same slope reversed
+    ctx.lineTo(oppX, oppY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // tan label
+    ctx.save();
+    ctx.font = 'bold 13px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillStyle = '#43a047';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = tanVal >= 0 ? 'bottom' : 'top';
+    ctx.fillText('tanθ', CX+R+6, endY + (tanVal >= 0 ? -4 : 14));
+    ctx.restore();
+  }
+
+  function drawPointP() {
+    const p = getP(thetaDeg);
+    ctx.save();
+    // outer glow
+    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 18);
+    grad.addColorStop(0, 'rgba(26,35,126,0.25)');
+    grad.addColorStop(1, 'rgba(26,35,126,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 18, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = '#1a237e';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 7, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, TAU);
+    ctx.fill();
+
+    // P label
+    ctx.fillStyle = '#1a237e';
+    ctx.font = 'bold 15px serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText('P', p.x + 10, p.y - 4);
+    ctx.restore();
+  }
+
+  function drawQuadrantLabels() {
+    ctx.save();
+    ctx.font = '22px "Microsoft YaHei","PingFang SC",sans-serif';
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const qR = R * 0.65;
+    const labels = [
+      [45, 'I'], [135, 'II'], [225, 'III'], [315, 'IV']
+    ];
+    for (const [deg, label] of labels) {
+      const rad = toRad(deg);
+      ctx.fillText(label, CX + qR*Math.cos(rad), CY - qR*Math.sin(rad));
+    }
+    ctx.restore();
+  }
+
+  function drawSpecialAngles() {
+    ctx.save();
+    const specials = [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+    ctx.fillStyle = 'rgba(21,101,192,0.20)';
+    for (const deg of specials) {
+      const p = getP(deg);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, TAU);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function updateCurveCanvas() {
+    const showSin = chkSinCurve.checked;
+    const showCos = chkCosCurve.checked;
+    secondaryArea.classList.toggle('visible', showSin || showCos);
+    if (!showSin && !showCos) return;
+
+    const cw = curveCanvas.width, ch = curveCanvas.height;
+    const cc = curveCtx;
+    cc.clearRect(0, 0, cw, ch);
+
+    const padL = 20, padR = 10, padT = 8, padB = 12;
+    const plotW = cw - padL - padR;
+    const plotH = ch - padT - padB;
+    const midY = padT + plotH/2;
+
+    // grid
+    cc.save();
+    cc.strokeStyle = '#eee';
+    cc.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const x = padL + (i/4)*plotW;
+      cc.beginPath(); cc.moveTo(x, padT); cc.lineTo(x, ch-padB); cc.stroke();
+    }
+    for (let i = 0; i <= 4; i++) {
+      const y = padT + (i/4)*plotH;
+      cc.beginPath(); cc.moveTo(padL, y); cc.lineTo(cw-padR, y); cc.stroke();
+    }
+    cc.restore();
+
+    // axes
+    cc.save();
+    cc.strokeStyle = '#aaa';
+    cc.lineWidth = 1;
+    cc.beginPath(); cc.moveTo(padL, midY); cc.lineTo(cw-padR, midY); cc.stroke();
+    cc.beginPath(); cc.moveTo(padL, padT); cc.lineTo(padL, ch-padB); cc.stroke();
+    // labels
+    cc.fillStyle = '#999';
+    cc.font = '10px sans-serif';
+    cc.textAlign = 'center'; cc.textBaseline = 'top';
+    cc.fillText('0°', padL, ch-padB+1);
+    cc.fillText('90°', padL+0.25*plotW, ch-padB+1);
+    cc.fillText('180°', padL+0.5*plotW, ch-padB+1);
+    cc.fillText('270°', padL+0.75*plotW, ch-padB+1);
+    cc.fillText('360°', cw-padR, ch-padB+1);
+    cc.textAlign = 'right'; cc.textBaseline = 'middle';
+    cc.fillText('1', padL-3, midY - plotH/2);
+    cc.fillText('-1', padL-3, midY + plotH/2);
+    cc.fillText('0', padL-3, midY);
+    cc.restore();
+
+    // curves
+    const thetaRad = toRad(thetaDeg);
+    if (showSin) {
+      cc.save();
+      cc.strokeStyle = '#e53935';
+      cc.lineWidth = 2;
+      cc.beginPath();
+      for (let px = 0; px <= plotW; px++) {
+        const deg = (px/plotW)*360;
+        const rad = toRad(deg);
+        const val = Math.sin(rad);
+        const x = padL + px;
+        const y = midY - (val/1.2)*(plotH/2);
+        if (px === 0) cc.moveTo(x, y); else cc.lineTo(x, y);
+      }
+      cc.stroke();
+      // dot at current position
+      const curX_sin = padL + (thetaDeg/360)*plotW;
+      const curY_sin = midY - (Math.sin(thetaRad)/1.2)*(plotH/2);
+      cc.fillStyle = '#e53935';
+      cc.beginPath(); cc.arc(curX_sin, curY_sin, 4, 0, TAU); cc.fill();
+      cc.restore();
+    }
+
+    if (showCos) {
+      cc.save();
+      cc.strokeStyle = '#1e88e5';
+      cc.lineWidth = 2;
+      cc.beginPath();
+      for (let px = 0; px <= plotW; px++) {
+        const deg = (px/plotW)*360;
+        const rad = toRad(deg);
+        const val = Math.cos(rad);
+        const x = padL + px;
+        const y = midY - (val/1.2)*(plotH/2);
+        if (px === 0) cc.moveTo(x, y); else cc.lineTo(x, y);
+      }
+      cc.stroke();
+      const curX_cos = padL + (thetaDeg/360)*plotW;
+      const curY_cos = midY - (Math.cos(thetaRad)/1.2)*(plotH/2);
+      cc.fillStyle = '#1e88e5';
+      cc.beginPath(); cc.arc(curX_cos, curY_cos, 4, 0, TAU); cc.fill();
+      cc.restore();
+    }
+
+    // vertical indicator line
+    cc.save();
+    cc.strokeStyle = 'rgba(0,0,0,0.2)';
+    cc.lineWidth = 1;
+    cc.setLineDash([3,3]);
+    const indX = padL + (thetaDeg/360)*plotW;
+    cc.beginPath(); cc.moveTo(indX, padT); cc.lineTo(indX, ch-padB); cc.stroke();
+    cc.setLineDash([]);
+    cc.restore();
+  }
+
+  // --- update ---
+  function updateAll() {
+    const rad = toRad(thetaDeg);
+    const sinVal = Math.sin(rad);
+    const cosVal = Math.cos(rad);
+    const tanVal = sinVal / cosVal;
+
+    // --- display values ---
+    angleDegEl.textContent = thetaDeg.toFixed(1) + '°';
+    angleRadEl.innerHTML = formatAngle(thetaDeg);
+    quadrantLabel.textContent = '→ ' + getQuadrant(thetaDeg);
+    sinDisplay.textContent = sinVal.toFixed(3);
+    cosDisplay.textContent = cosVal.toFixed(3);
+    tanDisplay.textContent = (Math.abs(cosVal) < 0.0005) ? '∞' : tanVal.toFixed(3);
+    identityDisplay.textContent = (sinVal*sinVal + cosVal*cosVal).toFixed(3);
+
+    // slider
+    angleSlider.value = thetaDeg;
+    sliderAngleDisplay.textContent = thetaDeg.toFixed(1) + '°';
+
+    // re-draw
+    draw();
+    updateCurveCanvas();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    drawAxes();
+    drawSpecialAngles();
+    drawUnitCircle();
+    drawAngleArc();
+    drawTriangleAndTrig();
+    drawTanLine();
+    drawPointP();
+    drawQuadrantLabels();
+  }
+
+  // --- interaction ---
+  function getAngleFromMouse(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
+    const dx = mx - CX;
+    const dy = CY - my;
+    let deg = Math.atan2(dy, dx) * 180 / PI;
+    if (deg < 0) deg += 360;
+    return deg;
+  }
+
+  function pointerDown(e) {
+    e.preventDefault();
+    const ce = e.touches ? e.touches[0] : e;
+    isDragging = true;
+    if (isPlaying) togglePlay();
+    thetaDeg = getAngleFromMouse(ce);
+    updateAll();
+  }
+
+  function pointerMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const ce = e.touches ? e.touches[0] : e;
+    thetaDeg = getAngleFromMouse(ce);
+    updateAll();
+  }
+
+  function pointerUp(e) {
+    isDragging = false;
+  }
+
+  // mouse
+  canvas.addEventListener('mousedown', pointerDown);
+  canvas.addEventListener('mousemove', pointerMove);
+  document.addEventListener('mouseup', pointerUp);
+  // touch
+  canvas.addEventListener('touchstart', pointerDown, {passive:false});
+  canvas.addEventListener('touchmove', pointerMove, {passive:false});
+  document.addEventListener('touchend', pointerUp);
+
+  // slider
+  angleSlider.addEventListener('input', function() {
+    if (isPlaying) togglePlay();
+    thetaDeg = parseFloat(this.value);
+    updateAll();
+  });
+
+  // speed
+  speedSlider.addEventListener('input', function() {
+    speedLabel.textContent = this.value;
+  });
+
+  // presets
+  document.querySelectorAll('.btn-preset').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (isPlaying) togglePlay();
+      thetaDeg = parseFloat(this.dataset.angle);
+      updateAll();
+    });
+  });
+
+  // curve toggles
+  chkSinCurve.addEventListener('change', updateCurveCanvas);
+  chkCosCurve.addEventListener('change', updateCurveCanvas);
+
+  // play
+  playBtn.addEventListener('click', togglePlay);
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    playBtn.textContent = isPlaying ? '❚❚ 暂停' : '▶ 播放';
+    playBtn.classList.toggle('playing', isPlaying);
+    if (isPlaying) {
+      lastTime = 0;
+      animId = requestAnimationFrame(animate);
+    } else if (animId) {
+      cancelAnimationFrame(animId);
+      animId = null;
+    }
+  }
+
+  let lastTime = 0;
+  function animate(time) {
+    if (!isPlaying) return;
+    if (!lastTime) lastTime = time;
+    const dt = time - lastTime;
+    lastTime = time;
+    const speed = parseFloat(speedSlider.value);
+    const degPerMs = 0.04 * speed;
+    thetaDeg += degPerMs * dt;
+    if (thetaDeg >= 360) thetaDeg -= 360;
+    updateAll();
+    animId = requestAnimationFrame(animate);
+  }
+
+  // --- init ---
+  updateAll();
+})();
+</script>
+</body>
+</html>

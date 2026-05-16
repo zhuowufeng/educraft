@@ -1,0 +1,74 @@
+[
+  {
+    "id": "quadratic-function",
+    "title": "二次函数图像探索",
+    "description": "交互式二次函数图像演示，支持实时调整a、b、c参数，动态观察抛物线变化，显示顶点、对称轴、交点等关键特征。",
+    "subject": "数学",
+    "grade": "初中",
+    "tags": ["二次函数", "抛物线", "函数图像", "代数"],
+    "file": "courseware/quadratic-function.html",
+    "author": "EduCraft",
+    "createdAt": "2026-05-16",
+    "featured": true
+  },
+  {
+    "id": "trig-unit-circle",
+    "title": "三角函数单位圆",
+    "description": "通过单位圆动态演示正弦、余弦、正切函数的定义和变化规律，角度可拖拽调整，实时显示函数值。",
+    "subject": "数学",
+    "grade": "高中",
+    "tags": ["三角函数", "单位圆", "正弦", "余弦", "几何"],
+    "file": "courseware/trig-unit-circle.html",
+    "author": "EduCraft",
+    "createdAt": "2026-05-16",
+    "featured": true
+  },
+  {
+    "id": "pythagorean",
+    "title": "勾股定理可视化证明",
+    "description": "直观展示勾股定理的几何意义，通过面积法验证 a² + b² = c²，支持交互式操作。",
+    "subject": "数学",
+    "grade": "初中",
+    "tags": ["勾股定理", "几何", "面积", "证明"],
+    "file": "courseware/pythagorean.html",
+    "author": "EduCraft",
+    "createdAt": "2026-05-16",
+    "featured": true
+  },
+  {
+    "id": "lens-imaging",
+    "title": "凸透镜成像规律",
+    "description": "模拟凸透镜成像实验，物距可拖拽调整，实时显示成像位置、大小、倒正和虚实变化，完美覆盖u>2f、u=2f、f<u<2f等所有成像规律。",
+    "subject": "物理",
+    "grade": "初中",
+    "tags": ["凸透镜", "成像", "光学", "物理实验"],
+    "file": "courseware/lens-imaging.html",
+    "author": "EduCraft",
+    "createdAt": "2026-05-16",
+    "featured": true
+  },
+  {
+    "id": "free-fall",
+    "title": "自由落体与抛体运动",
+    "description": "模拟自由落体、竖直上抛和平抛运动，实时显示位移、速度、加速度，支持调整初始参数。",
+    "subject": "物理",
+    "grade": "初中",
+    "tags": ["自由落体", "抛体运动", "力学", "运动学"],
+    "file": "courseware/free-fall.html",
+    "author": "EduCraft",
+    "createdAt": "2026-05-16",
+    "featured": false
+  },
+  {
+    "id": "probability",
+    "title": "概率统计模拟器",
+    "description": "通过抛硬币、掷骰子等实验直观理解概率与统计，支持大量重复实验，实时显示频率分布和统计图表。",
+    "subject": "数学",
+    "grade": "初中",
+    "tags": ["概率", "统计", "实验", "数据分析"],
+    "file": "courseware/probability.html",
+    "author": "EduCraft",
+    "createdAt": "2026-05-16",
+    "featured": false
+  }
+]

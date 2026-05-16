@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勾股定理可视化证明 - a&sup2; + b&sup2; = c&sup2;</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: #f0f4f8; color: #1a202c; padding: 20px; min-height: 100vh;
+    display: flex; justify-content: center; align-items: flex-start;
+  }
+  .container {
+    max-width: 960px; width: 100%; background: #fff; border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08); overflow: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #2b6cb0 0%, #1a365d 100%);
+    color: #fff; padding: 20px 28px; text-align: center;
+  }
+  header h1 { font-size: 26px; font-weight: 700; letter-spacing: 2px; }
+  header p { font-size: 15px; opacity: 0.85; margin-top: 6px; font-weight: 400; }
+  .eq-banner {
+    background: #ebf4ff; text-align: center; padding: 10px 20px;
+    border-bottom: 1px solid #d6e4f0;
+  }
+  .eq-banner .thm {
+    font-size: 24px; font-weight: 700;
+    font-family: "Times New Roman", "Cambria Math", "STIXGeneral", serif;
+    color: #2b6cb0; letter-spacing: 1px;
+  }
+  .thm .cb { color: #3182ce; }
+  .thm .cr { color: #e53e3e; }
+  .thm .cg { color: #2f855a; }
+  .thm .co { color: #4a5568; }
+  .layout { display: flex; flex-wrap: wrap; }
+  .canvas-wrap {
+    flex: 1; min-width: 0; padding: 16px;
+    background: #fafcff; display: flex; align-items: center; justify-content: center;
+  }
+  .canvas-wrap canvas {
+    display: block; width: 100%; max-width: 620px;
+    border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;
+    touch-action: none;
+  }
+  .side-panel {
+    width: 300px; min-width: 260px; flex-shrink: 0;
+    padding: 20px; border-left: 1px solid #e2e8f0;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .slider-group { }
+  .slider-group .sl {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 15px; font-weight: 600; margin-bottom: 4px;
+  }
+  .slider-group .sl .sv {
+    font-weight: 700; font-family: "Times New Roman", serif; min-width: 44px; text-align: right; font-size: 17px;
+  }
+  .sr { display: flex; align-items: center; gap: 10px; }
+  .sr input[type="range"] {
+    -webkit-appearance: none; appearance: none; flex: 1; height: 6px;
+    border-radius: 3px; background: #e2e8f0; outline: none;
+  }
+  .sr input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
+    border-radius: 50%; cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: transform 0.15s;
+  }
+  .sr input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  .sr input[type="range"]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .sr input[type="range"].sa::-webkit-slider-thumb { background: #3182ce; }
+  .sr input[type="range"].sa::-moz-range-thumb { background: #3182ce; }
+  .sr input[type="range"].sb::-webkit-slider-thumb { background: #e53e3e; }
+  .sr input[type="range"].sb::-moz-range-thumb { background: #e53e3e; }
+  .ic {
+    background: #f7fafc; border-radius: 8px; padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+  }
+  .ic h3 {
+    font-size: 14px; color: #4a5568; margin-bottom: 8px; font-weight: 600;
+    border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; letter-spacing: 1px;
+  }
+  .ed {
+    text-align: center; padding: 6px 0 4px 0;
+    font-size: 18px; font-weight: 700;
+    font-family: "Times New Roman", "Cambria Math", serif;
+  }
+  .ed .cl { color: #3182ce; }
+  .ed .cr { color: #e53e3e; }
+  .ed .cg { color: #2f855a; }
+  .ed .co { color: #4a5568; margin: 0 2px; }
+  .vg {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  }
+  .vc {
+    padding: 8px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0;
+    transition: all 0.3s;
+  }
+  .vc .lbl { font-size: 11px; color: #718096; font-weight: 500; }
+  .vc .num {
+    font-size: 18px; font-weight: 700; font-family: "Times New Roman", "Cambria Math", serif;
+    margin-top: 2px; transition: all 0.3s;
+  }
+  .vc.glowing { transform: scale(1.06); box-shadow: 0 0 12px rgba(49,130,206,0.3); }
+  .vc.blue { background: #eff6ff; }
+  .vc.blue .num { color: #3182ce; }
+  .vc.red { background: #fff5f5; }
+  .vc.red .num { color: #e53e3e; }
+  .vc.green { background: #f0fff4; }
+  .vc.green .num { color: #2f855a; }
+  .vc.sum { background: #fffbeb; grid-column: 1 / -1; }
+  .vc.sum .num { color: #d69e2e; font-size: 20px; }
+  .vc.eq { background: #f0fff4; grid-column: 1 / -1; }
+  .vc.eq .num { color: #2f855a; font-size: 20px; }
+  .ps {
+    text-align: center; font-size: 14px; color: #4a5568;
+    padding: 10px; background: #f7fafc; border-radius: 8px;
+    border: 1px solid #e2e8f0; min-height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .ps.hl { background: #ebf8ff; border-color: #3182ce; color: #2b6cb0; }
+  .ps.ok { background: #f0fff4; border-color: #2f855a; color: #22543d; }
+  .btn {
+    padding: 10px 16px; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-pri {
+    background: linear-gradient(135deg, #2b6cb0, #1a365d);
+    color: #fff; width: 100%;
+  }
+  .btn-pri:hover { background: linear-gradient(135deg, #1a365d, #0f2440); }
+  .btn-pri.on { background: linear-gradient(135deg, #c53030, #9b2c2c); }
+  .btn-pri.on:hover { background: linear-gradient(135deg, #9b2c2c, #742a2a); }
+  .btn-sec {
+    background: #e2e8f0; color: #2d3748; width: 100%;
+  }
+  .btn-sec:hover { background: #cbd5e0; }
+  .br { display: flex; gap: 8px; }
+  .leg {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+  }
+  .leg span {
+    display: flex; align-items: center; gap: 5px; font-size: 12px; color: #4a5568;
+  }
+  .leg .sw { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  @media (max-width: 720px) {
+    body { padding: 10px; }
+    header h1 { font-size: 20px; }
+    header { padding: 16px; }
+    .side-panel { width: 100%; border-left: none; border-top: 1px solid #e2e8f0; }
+    .canvas-wrap { padding: 10px; }
+    .canvas-wrap canvas { max-width: 100%; }
+    .eq-banner .thm { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>勾股定理可视化证明</h1>
+    <p>直角三角形中，两条直角边的平方和等于斜边的平方</p>
+  </header>
+  <div class="eq-banner">
+    <div class="thm">
+      <span class="cb">a&sup2;</span><span class="co"> + </span><span class="cr">b&sup2;</span><span class="co"> = </span><span class="cg">c&sup2;</span>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="canvas-wrap">
+      <canvas id="pc"></canvas>
+    </div>
+    <div class="side-panel">
+      <div class="slider-group">
+        <div class="sl">
+          <span><span style="color:#3182ce;font-weight:700;">a</span> 直角边</span>
+          <span class="sv" id="vlA" style="color:#3182ce;">3.0</span>
+        </div>
+        <div class="sr"><input type="range" class="sa" id="slA" min="1" max="8" step="0.5" value="3"></div>
+      </div>
+      <div class="slider-group">
+        <div class="sl">
+          <span><span style="color:#e53e3e;font-weight:700;">b</span> 直角边</span>
+          <span class="sv" id="vlB" style="color:#e53e3e;">4.0</span>
+        </div>
+        <div class="sr"><input type="range" class="sb" id="slB" min="1" max="8" step="0.5" value="4"></div>
+      </div>
+      <div class="ic">
+        <h3>数值计算</h3>
+        <div class="ed">
+          <span class="cl">a</span><span class="co"> = </span><span class="cl" id="eA">3.0</span>
+          <span class="co">&nbsp;&nbsp;</span>
+          <span class="cr">b</span><span class="co"> = </span><span class="cr" id="eB">4.0</span>
+          <span class="co">&nbsp;&nbsp;</span>
+          <span class="cg">c</span><span class="co"> = </span><span class="cg" id="eC">5.0</span>
+        </div>
+        <div class="vg">
+          <div class="vc blue" id="vcA2"><div class="lbl">a&sup2;</div><div class="num" id="nA2">9.00</div></div>
+          <div class="vc red" id="vcB2"><div class="lbl">b&sup2;</div><div class="num" id="nB2">16.00</div></div>
+          <div class="vc green" id="vcC2"><div class="lbl">c&sup2;</div><div class="num" id="nC2">25.00</div></div>
+          <div class="vc sum" id="vcSum"><div class="lbl">a&sup2; + b&sup2;</div><div class="num" id="nSum">25.00</div></div>
+        </div>
+      </div>
+      <div class="ps" id="ps">点击"演示证明"查看面积关系</div>
+      <div class="br">
+        <button class="btn btn-pri" id="pb">演示证明</button>
+        <button class="btn btn-sec" id="rb">重置</button>
+      </div>
+      <div class="leg">
+        <span><span class="sw" style="background:#3182ce"></span>a&sup2;</span>
+        <span><span class="sw" style="background:#e53e3e"></span>b&sup2;</span>
+        <span><span class="sw" style="background:#2f855a"></span>c&sup2;</span>
+        <span><span class="sw" style="background:#d69e2e"></span>直角</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var canvas = document.getElementById('pc'), ctx = canvas.getContext('2d');
+  var wrap = canvas.parentElement;
+  var slA = document.getElementById('slA'), slB = document.getElementById('slB');
+  var vlA = document.getElementById('vlA'), vlB = document.getElementById('vlB');
+  var eA = document.getElementById('eA'), eB = document.getElementById('eB'), eC = document.getElementById('eC');
+  var nA2 = document.getElementById('nA2'), nB2 = document.getElementById('nB2');
+  var nC2 = document.getElementById('nC2'), nSum = document.getElementById('nSum');
+  var ps = document.getElementById('ps'), pb = document.getElementById('pb'), rb = document.getElementById('rb');
+
+  var a = 3, b = 4;
+  var animating = false, animId = null, animT = 0;
+  var cssW = 0, cssH = 0, W = 0, H = 0, dpr = 1;
+
+  // ---- resize ----
+  function resize() {
+    var r = wrap.getBoundingClientRect();
+    var sz = Math.min(Math.max(r.width - 32, 280), 620);
+    cssW = sz; cssH = Math.round(sz * 0.82);
+    dpr = window.devicePixelRatio || 1;
+    W = Math.round(cssW * dpr); H = Math.round(cssH * dpr);
+    canvas.style.width = cssW + 'px'; canvas.style.height = cssH + 'px';
+    canvas.width = W; canvas.height = H;
+    draw();
+  }
+
+  // ---- geometry transform ----
+  function getTF() {
+    var pad = 0.13 * Math.min(cssW, cssH) * dpr;
+    var minX = -a, maxX = a + b, minY = -b, maxY = a + b;
+    var bw = maxX - minX, bh = maxY - minY;
+    var s = Math.min((W - 2 * pad) / bw, (H - 2 * pad) / bh);
+    var cxm = (minX + maxX) / 2, cym = (minY + maxY) / 2;
+    return { s:s, cx:W/2, cy:H/2, cxm:cxm, cym:cym };
+  }
+
+  function mc(mx, my, tf) {
+    return { x: tf.cx + tf.s * (mx - tf.cxm), y: tf.cy - tf.s * (my - tf.cym) };
+  }
+
+  // ---- drawing helpers ----
+  function drawPoly(pts, tf, fill, stroke, lw) {
+    if (pts.length < 2) return;
+    ctx.beginPath();
+    var p = mc(pts[0][0], pts[0][1], tf);
+    ctx.moveTo(p.x, p.y);
+    for (var i = 1; i < pts.length; i++) {
+      p = mc(pts[i][0], pts[i][1], tf);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2*dpr; ctx.stroke(); }
+  }
+
+  function drawPolyOff(pts, tf, dx, dy, fill, stroke, lw) {
+    if (pts.length < 2) return;
+    ctx.beginPath();
+    var p = mc(pts[0][0] + dx, pts[0][1] + dy, tf);
+    ctx.moveTo(p.x, p.y);
+    for (var i = 1; i < pts.length; i++) {
+      p = mc(pts[i][0] + dx, pts[i][1] + dy, tf);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2*dpr; ctx.stroke(); }
+  }
+
+  // ---- main draw ----
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+
+    var tf = getTF();
+    var s = tf.s;
+
+    // Animation state
+    var isAnim = animating || animT > 0;
+    var phase = 0, pProg = 0, pulse = 0;
+    if (isAnim) {
+      if (animT < 0.15) { phase = 1; pProg = animT / 0.15; }
+      else if (animT < 0.30) { phase = 2; pProg = (animT - 0.15) / 0.15; }
+      else if (animT < 0.45) { phase = 3; pProg = (animT - 0.30) / 0.15; }
+      else if (animT < 0.75) { phase = 4; pProg = (animT - 0.45) / 0.30; }
+      else { phase = 5; pProg = (animT - 0.75) / 0.25; }
+      // Cap pProg
+      pProg = Math.min(pProg, 1);
+      // Global pulse
+      pulse = 0.5 + 0.5 * Math.sin(Date.now() / 200);
+    }
+
+    // ---- right angle mark ----
+    var rp = mc(0, 0, tf);
+    var rs = 10 * dpr;
+    ctx.strokeStyle = '#d69e2e';
+    ctx.lineWidth = 2 * dpr;
+    ctx.beginPath();
+    ctx.moveTo(rp.x + rs, rp.y); ctx.lineTo(rp.x + rs, rp.y - rs); ctx.lineTo(rp.x, rp.y - rs);
+    ctx.stroke();
+    // right-angle dot
+    ctx.fillStyle = '#d69e2e';
+    ctx.beginPath(); ctx.arc(rp.x, rp.y, 3*dpr, 0, Math.PI*2); ctx.fill();
+
+    // ---- triangle (always drawn) ----
+    var tri = [[0,0],[b,0],[0,a]];
+    drawPoly(tri, tf, 'rgba(99,102,241,0.06)', '#2d3748', 2.5*dpr);
+
+    // ---- a-square (blue) ----
+    var aPts = [[0,0],[0,a],[-a,a],[-a,0]];
+    var aCenter = [-a/2, a/2];
+    var cCenter = [(a+b)/2, (a+b)/2];
+    var aDelX = cCenter[0] - aCenter[0]; // a + b/2
+    var aDelY = cCenter[1] - aCenter[1]; // b/2
+
+    // b-square (red)
+    var bPts = [[0,0],[b,0],[b,-b],[0,-b]];
+    var bCenter = [b/2, -b/2];
+    var bDelX = cCenter[0] - bCenter[0]; // a/2
+    var bDelY = cCenter[1] - bCenter[1]; // a/2 + b
+
+    // Compute opacities based on phase
+    var aFillO = 0.18, aStrO = 0.8, aFillPulse = 1, aStrPulse = 1;
+    var bFillO = 0.18, bStrO = 0.8, bFillPulse = 1, bStrPulse = 1;
+    var cFillO = 0.18, cStrO = 0.8, cFillPulse = 1, cStrPulse = 1;
+
+    // Sliding offsets
+    var aOffX = 0, aOffY = 0;
+    var bOffX = 0, bOffY = 0;
+
+    if (phase === 1) {
+      aFillPulse = 0.6 + 0.4 * pulse;
+      aStrPulse = 0.6 + 0.4 * pulse;
+    } else if (phase === 2) {
+      bFillPulse = 0.6 + 0.4 * pulse;
+      bStrPulse = 0.6 + 0.4 * pulse;
+    } else if (phase === 3) {
+      cFillPulse = 0.6 + 0.4 * pulse;
+      cStrPulse = 0.6 + 0.4 * pulse;
+    } else if (phase === 4) {
+      var ease = 1 - Math.pow(1 - pProg, 2); // ease out quad
+      aOffX = aDelX * ease;
+      aOffY = aDelY * ease;
+      bOffX = bDelX * ease;
+      bOffY = bDelY * ease;
+      aFillO *= (1 - 0.6 * ease);
+      aStrO *= (1 - 0.6 * ease);
+      bFillO *= (1 - 0.6 * ease);
+      bStrO *= (1 - 0.6 * ease);
+      cFillO = 0.18 + 0.5 * ease;
+      cStrO = 0.8 + 0.2 * ease;
+    } else if (phase === 5) {
+      aOffX = aDelX; aOffY = aDelY;
+      bOffX = bDelX; bOffY = bDelY;
+      aFillO *= 0.3; aStrO *= 0.3;
+      bFillO *= 0.3; bStrO *= 0.3;
+      cFillO = 0.68; cStrO = 1;
+    }
+
+    function rgba(r, g, b, o) {
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + o + ')';
+    }
+
+    // Draw a-square (with offset if animating)
+    drawPolyOff(aPts, tf, aOffX, aOffY,
+      rgba(49,130,206, aFillO * aFillPulse),
+      rgba(49,130,206, aStrO * aStrPulse), 2.5*dpr);
+
+    // a-square area label
+    var aLabPos = mc(aCenter[0] + aOffX, aCenter[1] + aOffY, tf);
+    ctx.fillStyle = rgba(49,130,206, Math.min(1, aStrO * aStrPulse * 2));
+    ctx.font = 'bold ' + (14*dpr) + 'px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var a2 = (a*a).toFixed(2);
+    var aLabel = 'a² = ' + a2;
+    ctx.fillText(aLabel, aLabPos.x, aLabPos.y);
+
+    // Draw b-square (with offset)
+    drawPolyOff(bPts, tf, bOffX, bOffY,
+      rgba(229,62,62, bFillO * bFillPulse),
+      rgba(229,62,62, bStrO * bStrPulse), 2.5*dpr);
+
+    var bLabPos = mc(bCenter[0] + bOffX, bCenter[1] + bOffY, tf);
+    ctx.fillStyle = rgba(229,62,62, Math.min(1, bStrO * bStrPulse * 2));
+    ctx.font = 'bold ' + (14*dpr) + 'px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('b² = ' + (b*b).toFixed(2), bLabPos.x, bLabPos.y);
+
+    // ---- c-square (green) ----
+    var cPts = [[0,a],[b,0],[a+b,b],[a,a+b]];
+
+    // For the c-square, during phase 4 it grows more opaque
+    // During phase 5 it's fully opaque
+    drawPoly(cPts, tf,
+      rgba(47,133,90, cFillO * cFillPulse),
+      rgba(47,133,90, cStrO * cStrPulse), 2.5*dpr);
+
+    var cLabPos = mc(cCenter[0], cCenter[1], tf);
+    ctx.fillStyle = rgba(47,133,90, Math.min(1, cStrO * cStrPulse * 2));
+    ctx.font = 'bold ' + (14*dpr) + 'px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var cVal = Math.sqrt(a*a + b*b);
+    ctx.fillText('c² = ' + (cVal*cVal).toFixed(2), cLabPos.x, cLabPos.y);
+
+    // ---- flowing particles during Phase 4 ----
+    if (phase === 4) {
+      var numDots = 15;
+      var flowProg = Math.min(pProg * 1.2, 1);
+      var dotSize = 3 * dpr;
+
+      // Blue dots flowing from a-square toward c-square
+      for (var i = 0; i < numDots; i++) {
+        var t = (i / numDots) * flowProg;
+        var pp = mc(aCenter[0] + aDelX * t, aCenter[1] + aDelY * t, tf);
+        var alpha = 0.7 * (1 - Math.abs(t - flowProg/2) / (flowProg/2 + 0.01));
+        if (alpha > 0.05) {
+          ctx.beginPath();
+          ctx.arc(pp.x, pp.y, dotSize * (0.5 + 0.5 * (1-t)), 0, Math.PI*2);
+          ctx.fillStyle = rgba(49,130,206, alpha);
+          ctx.fill();
+        }
+      }
+      // Red dots flowing from b-square toward c-square
+      for (var i = 0; i < numDots; i++) {
+        var t = (i / numDots) * flowProg;
+        var pp = mc(bCenter[0] + bDelX * t, bCenter[1] + bDelY * t, tf);
+        var alpha = 0.7 * (1 - Math.abs(t - flowProg/2) / (flowProg/2 + 0.01));
+        if (alpha > 0.05) {
+          ctx.beginPath();
+          ctx.arc(pp.x, pp.y, dotSize * (0.5 + 0.5 * (1-t)), 0, Math.PI*2);
+          ctx.fillStyle = rgba(229,62,62, alpha);
+          ctx.fill();
+        }
+      }
+    }
+
+    // ---- checkmark in phase 5 ----
+    if (phase === 5) {
+      var ckProg = Math.min(pProg * 1.5, 1);
+      var ckSize = 18 * dpr;
+      var ckx = cLabPos.x + ckSize * 1.5;
+      var cky = cLabPos.y - ckSize;
+      ctx.strokeStyle = rgba(47,133,90, ckProg);
+      ctx.lineWidth = 4 * dpr;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(ckx - ckSize*0.7, cky);
+      ctx.lineTo(ckx - ckSize*0.2, cky + ckSize*0.7);
+      ctx.lineTo(ckx + ckSize*0.8, cky - ckSize*0.5);
+      var drawTo = ckProg < 0.5
+        ? ckx - ckSize*0.2  + (ckx - ckSize*0.2 - (ckx - ckSize*0.7)) * ckProg * 2
+        : ckx - ckSize*0.2 + ((ckx + ckSize*0.8) - (ckx - ckSize*0.2)) * (ckProg - 0.5) * 2;
+      // Simpler: just draw the whole checkmark at increasing opacity
+      // Actually, the lineTo approach above doesn't work well for partial drawing
+      // Let me just draw the full checkmark and vary opacity
+      ctx.restore(); // restore before checkmark
+      ctx.save();
+      ctx.strokeStyle = rgba(47,133,90, Math.min(1, ckProg * 1.5));
+      ctx.lineWidth = 4 * dpr;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(ckx - ckSize*0.7, cky);
+      ctx.lineTo(ckx - ckSize*0.2, cky + ckSize*0.7);
+      ctx.lineTo(ckx + ckSize*0.8, cky - ckSize*0.5);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+
+    // ---- update values ----
+    var c = Math.sqrt(a*a + b*b);
+    nA2.textContent = (a*a).toFixed(2);
+    nB2.textContent = (b*b).toFixed(2);
+    nC2.textContent = (c*c).toFixed(2);
+    nSum.textContent = (a*a + b*b).toFixed(2);
+    eA.textContent = a.toFixed(1);
+    eB.textContent = b.toFixed(1);
+    eC.textContent = c.toFixed(2);
+
+    // ---- update status ----
+    var a2v = (a*a).toFixed(2);
+    var b2v = (b*b).toFixed(2);
+    var c2v = (c*c).toFixed(2);
+    var sumv = (a*a + b*b).toFixed(2);
+
+    if (!isAnim) {
+      ps.textContent = '点击“演示证明”查看面积关系';
+      ps.className = 'ps';
+    } else if (phase === 1) {
+      ps.innerHTML = '正方形 <b>a²</b> 的面积为 <b>' + a2v + '</b>';
+      ps.className = 'ps hl';
+    } else if (phase === 2) {
+      ps.innerHTML = '正方形 <b>b²</b> 的面积为 <b>' + b2v + '</b>';
+      ps.className = 'ps hl';
+    } else if (phase === 3) {
+      ps.innerHTML = '正方形 <b>c²</b> 的面积为 <b>' + c2v + '</b>';
+      ps.className = 'ps hl';
+    } else if (phase === 4) {
+      ps.innerHTML = '<b>' + a2v + '</b> + <b>' + b2v + '</b> = <b>' + c2v + '</b>  — 观察面积关系...';
+      ps.className = 'ps hl';
+    } else if (phase === 5) {
+      ps.innerHTML = '<b>' + a2v + '</b> + <b>' + b2v + '</b> = <b>' + c2v + '</b> ✓ 勾股定理成立！';
+      ps.className = 'ps ok';
+    }
+  }
+
+  // ---- animation loop ----
+  function animLoop() {
+    if (!animating) return;
+    animT += 0.008;
+    if (animT >= 1) {
+      animT = 1;
+      animating = false;
+      pb.textContent = '演示证明';
+      pb.className = 'btn btn-pri';
+    }
+    draw();
+    animId = requestAnimationFrame(animLoop);
+  }
+
+  function toggleProof() {
+    if (animating) {
+      animating = false;
+      if (animId) cancelAnimationFrame(animId);
+      pb.textContent = '演示证明';
+      pb.className = 'btn btn-pri';
+      draw();
+      return;
+    }
+    // Reset animation
+    animT = 0;
+    animating = true;
+    pb.textContent = '✖ 停止';
+    pb.className = 'btn btn-pri on';
+    if (animId) cancelAnimationFrame(animId);
+    animId = requestAnimationFrame(animLoop);
+  }
+
+  function resetDemo() {
+    if (animId) cancelAnimationFrame(animId);
+    animating = false;
+    animT = 0;
+    pb.textContent = '演示证明';
+    pb.className = 'btn btn-pri';
+    draw();
+  }
+
+  // ---- slider events ----
+  slA.addEventListener('input', function() {
+    a = parseFloat(this.value);
+    vlA.textContent = a.toFixed(1);
+    if (animating) resetDemo();
+    else draw();
+  });
+
+  slB.addEventListener('input', function() {
+    b = parseFloat(this.value);
+    vlB.textContent = b.toFixed(1);
+    if (animating) resetDemo();
+    else draw();
+  });
+
+  pb.addEventListener('click', toggleProof);
+  rb.addEventListener('click', resetDemo);
+
+  // keyboard shortcut
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'r' || e.key === 'R') resetDemo();
+    if (e.key === ' ') { e.preventDefault(); toggleProof(); }
+  });
+
+  // ---- init ----
+  window.addEventListener('resize', resize);
+  resize();
+})();
+</script>
+</body>
+</html>

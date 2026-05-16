@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCraft 智课工坊</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">EduCraft</span>
+                <span class="logo-sub">智课工坊</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link active">首页</a>
+                <a href="/library" class="nav-link ">课件库</a>
+                <a href="/generate" class="nav-link ">AI 生成</a>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">AI 赋能教育</div>
+            <h1 class="hero-title">用 AI 打造<br>交互式教学课件</h1>
+            <p class="hero-desc">EduCraft 智课工坊 — 面向中小学教师的 AI 课件生成平台。<br>自然语言描述需求，即刻生成高质量的交互式课件，让备课更轻松。</p>
+            <div class="hero-actions">
+                <a href="/generate" class="btn btn-primary btn-lg">
+                    <span>✦ 开始生成</span>
+                </a>
+                <a href="/library" class="btn btn-secondary btn-lg">
+                    <span>浏览课件库</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-cards">
+                <div class="hero-card" style="--i:0">
+                    <div class="hero-card-icon">📐</div>
+                    <div>二次函数图像</div>
+                </div>
+                <div class="hero-card" style="--i:1">
+                    <div class="hero-card-icon">🔬</div>
+                    <div>凸透镜成像</div>
+                </div>
+                <div class="hero-card" style="--i:2">
+                    <div class="hero-card-icon">📊</div>
+                    <div>概率统计</div>
+                </div>
+                <div class="hero-card" style="--i:3">
+                    <div class="hero-card-icon">⚡</div>
+                    <div>物理模拟</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section features">
+    <div class="container">
+        <h2 class="section-title">为什么选择 EduCraft</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI 智能生成</h3>
+                <p>用自然语言描述您的教学需求，AI 自动生成高质量的交互课件，节省备课时间。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <h3>交互式学习</h3>
+                <p>拖拽、滑块、动画、实时反馈，让抽象概念变得直观可感，学生可以动手探索。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📥</div>
+                <h3>即点即用</h3>
+                <p>生成的课件为独立 HTML 文件，无需安装任何软件，发送给学生即可打开使用。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>迭代优化</h3>
+                <p>不满意可以继续描述修改意见，AI 会根据您的反馈持续优化，直到满意为止。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>丰富模板库</h3>
+                <p>内置覆盖初中数理核心知识点的精品课件模板，可直接使用或在此基础上修改。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>精准匹配课标</h3>
+                <p>所有课件内容严格遵循国家课程标准，确保教学内容准确、规范。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section featured-courseware">
+    <div class="container">
+        <h2 class="section-title">精品课件推荐</h2>
+        <p class="section-desc">覆盖初中数学和物理核心知识点，每一份都是课堂可用的成品</p>
+        <div class="courseware-grid">
+            
+            <a href="/view/quadratic-function" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">二次函数图像探索</h3>
+                <p class="courseware-desc">交互式二次函数图像演示，支持实时调整a、b、c参数，动态观察抛物线变化，显示顶点、对称轴、交点等关键特征。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">二次函数</span>
+                    
+                    <span class="tag">抛物线</span>
+                    
+                    <span class="tag">函数图像</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/trig-unit-circle" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">高中</span>
+                </div>
+                <h3 class="courseware-title">三角函数单位圆</h3>
+                <p class="courseware-desc">通过单位圆动态演示正弦、余弦、正切函数的定义和变化规律，角度可拖拽调整，实时显示函数值。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">三角函数</span>
+                    
+                    <span class="tag">单位圆</span>
+                    
+                    <span class="tag">正弦</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/pythagorean" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 数学">数学</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">勾股定理可视化证明</h3>
+                <p class="courseware-desc">直观展示勾股定理的几何意义，通过面积法验证 a² + b² = c²，支持交互式操作。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">勾股定理</span>
+                    
+                    <span class="tag">几何</span>
+                    
+                    <span class="tag">面积</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+            <a href="/view/lens-imaging" class="courseware-card">
+                <div class="courseware-card-header">
+                    <span class="courseware-subject 物理">物理</span>
+                    <span class="courseware-grade">初中</span>
+                </div>
+                <h3 class="courseware-title">凸透镜成像规律</h3>
+                <p class="courseware-desc">模拟凸透镜成像实验，物距可拖拽调整，实时显示成像位置、大小、倒正和虚实变化，完美覆盖u&gt;2f、u=2f、f&lt;u&lt;2f等所有成像规律。</p>
+                <div class="courseware-tags">
+                    
+                    <span class="tag">凸透镜</span>
+                    
+                    <span class="tag">成像</span>
+                    
+                    <span class="tag">光学</span>
+                    
+                </div>
+                <div class="courseware-card-footer">
+                    <span class="courseware-action">预览下载 →</span>
+                </div>
+            </a>
+            
+        </div>
+        <div class="section-actions">
+            <a href="/library" class="btn btn-secondary">查看全部课件 →</a>
+        </div>
+    </div>
+</section>
+
+<section class="section how-it-works">
+    <div class="container">
+        <h2 class="section-title">三步搞定备课</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>描述需求</h3>
+                <p>用自然语言告诉 AI 您需要什么样的课件，比如"帮我做一个凸透镜成像的交互演示"</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>AI 生成</h3>
+                <p>AI 自动生成高质量的交互式 HTML 课件，支持预览和实时交互</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>下载使用</h3>
+                <p>下载课件文件，直接发给学生或在课堂上展示，也可以继续优化迭代</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>EduCraft 智课工坊</h4>
+                    <p>用 AI 赋能教育，让每一位教师都能轻松制作高质量的交互课件。</p>
+                </div>
+                <div>
+                    <h4>学科覆盖</h4>
+                    <ul>
+                        <li><a href="/library?subject=数学">初中数学</a></li>
+                        <li><a href="/library?subject=物理">初中物理</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>特色</h4>
+                    <ul>
+                        <li>AI 智能生成</li>
+                        <li>交互式学习</li>
+                        <li>即点即用</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EduCraft 智课工坊. 让备课更轻松，让课堂更精彩。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
